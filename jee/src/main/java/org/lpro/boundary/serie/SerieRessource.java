@@ -180,7 +180,7 @@ public class SerieRessource {
         }
         
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
-        Serie newSerie = this.sm.saveWithPictures(serie, hspictures);
+        Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
         return Response.created(uri).build();
