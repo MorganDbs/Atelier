@@ -14,8 +14,10 @@ Vue.use(interceptors, { router })
 Vue.use(VuexFlash, { mixin: true, duration: 2500 })
 Vue.use(BootstrapVue)
 
-
 Vue.config.productionTip = false
+
+require('../node_modules/bootstrap/dist/css/bootstrap.min.css')
+require('../node_modules/leaflet/dist/leaflet.css')
 
 /* eslint-disable no-new */
 new Vue({
