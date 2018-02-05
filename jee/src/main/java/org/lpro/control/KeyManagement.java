@@ -6,7 +6,7 @@ import java.security.Key;
 public class KeyManagement {
 
     public Key generateKey() {
-        String keyString = "lbsjee";
+        String keyString = "geoquizz";
         Key key = new SecretKeySpec(keyString.getBytes(), 0, keyString.getBytes().length, "DES");
         return key;
     }
