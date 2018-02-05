@@ -6,6 +6,7 @@
 package org.lpro.boundary.difficulty;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -32,6 +33,16 @@ public class GameManager {
     public List<Game> findAll() {
         Query q = this.em.createNamedQuery("Game.findAll", Game.class);
         q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        return q.getResultList();
+    }
+    
+    public Game findById(String id){
+        return this.em.find(Game.class, id);
+    }
+    
+    public List<Game> findBySerieId(Serie s) {
+        String query = "SELECT g FROM Game g WHERE g.id_serie = '" + s.getId() + "'";
+        Query q = this.em.createQuery(query);
         return q.getResultList();
     }
     

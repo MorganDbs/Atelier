@@ -11,15 +11,18 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,6 +30,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.lpro.boundary.difficulty.DifficultyManager;
+import org.lpro.boundary.difficulty.GameManager;
 import org.lpro.boundary.picture.PictureManager;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
@@ -43,6 +48,22 @@ public class SerieRessource {
     
     @Inject
     PictureManager pm;
+    
+    @Inject
+    GameManager gm;
+    
+    @Inject
+    DifficultyManager dm;
+    
+    @GET
+    @ApiOperation(value = "Récupère toutes les séries", notes = "Renvoie le JSON associé à la collection de séries")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getCategories() {
+        List<Serie> s = this.sm.findAll();
+        return Response.status(Response.Status.EXPECTATION_FAILED).entity(buildJsonSeries(s)).build();
+    }
     
     @POST
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
@@ -185,5 +206,36 @@ public class SerieRessource {
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
         return Response.created(uri).build();
        
+    }
+
+    private JsonObject buildJsonSeries(List<Serie> s){
+        JsonArrayBuilder series = Json.createArrayBuilder();
+        
+        s.forEach((serie)->{
+            JsonArrayBuilder difficulties = Json.createArrayBuilder();
+            serie.getGame().forEach((g)->{ 
+                JsonObject difficulty = Json.createObjectBuilder()
+                        .add("id", g.getId_difficulty())
+                        .add("token", this.gm.findById(g.getId()).getToken())
+                        .add("name", this.dm.findById(this.gm.findById(g.getId()).getId_difficulty()).getLevel())
+                        .build();
+                difficulties.add(difficulty);
+            });
+            
+            JsonObject ser = Json.createObjectBuilder()
+                    .add("id", serie.getId())
+                    .add("name", serie.getName())
+                    .add("city", serie.getCity())
+                    .add("description", serie.getDescription())
+                    .add("difficulties", difficulties)
+                    .build();
+            
+            series.add(ser);
+        });
+        
+        return Json.createObjectBuilder()
+                .add("type", "collection")
+                .add("series", series)
+                .build();
     }
 }
