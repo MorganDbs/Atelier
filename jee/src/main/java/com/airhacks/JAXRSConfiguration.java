@@ -25,7 +25,7 @@ public class JAXRSConfiguration extends Application {
         classes.add(org.lpro.boundary.sandwich.SandwichRessource.class);
         classes.add(org.lpro.boundary.sandwich.exception.SandwichNotFound.class);
         classes.add(org.lpro.boundary.sandwich.mapper.SandwichNotFoundMapper.class);
-        classes.add(org.lpro.boundary.authentification.UtilisateurBoundary.class);
+        classes.add(org.lpro.boundary.authentification.UserBoundary.class);
         classes.add(org.lpro.boundary.carte.CarteRessource.class);
         classes.add(org.lpro.boundary.commande.CommandeRessource.class);*/
 
