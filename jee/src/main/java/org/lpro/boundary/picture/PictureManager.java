@@ -5,6 +5,8 @@
  */
 package org.lpro.boundary.picture;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
+import java.util.List;
 import java.util.UUID;
 import org.lpro.entity.Picture;
 import javax.persistence.EntityManager;

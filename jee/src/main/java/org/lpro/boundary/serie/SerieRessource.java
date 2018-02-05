@@ -23,15 +23,18 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.lpro.boundary.difficulty.DifficultyManager;
-import org.lpro.boundary.difficulty.GameManager;
+import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
@@ -60,9 +63,55 @@ public class SerieRessource {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 500, message = "Internal server error")})
-    public Response getCategories() {
+    public Response getSeries() {
         List<Serie> s = this.sm.findAll();
         return Response.status(Response.Status.EXPECTATION_FAILED).entity(buildJsonSeries(s)).build();
+    }
+    
+    @GET
+    @Path("{id}")
+    @ApiOperation(value = "Récupère une série", notes = "Renvoie le JSON associé à un série")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getSerie(@PathParam("id") String id, @QueryParam("token") String token, @HeaderParam("X-lbs-token") String header, @Context UriInfo uriInfo) {
+        Serie s;
+        Boolean flag;
+        
+        try{
+          s = this.sm.findById(id);
+        }catch(NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "La série n'existe pas")
+                            .build()
+            ).build();
+        }
+        
+        if (token == null && header == null) {
+            return Response.status(Response.Status.FORBIDDEN).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Il faut renseigner un token")
+                            .build()
+            ).build();
+        }
+        
+        String tokenGame = (token != null) ? token : header;
+        
+        flag = s.getGame().stream().anyMatch(t -> {return tokenGame.equals(t.getToken()); });
+        
+        if(!flag){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Le token pour cette série n'existe pas")
+                            .build()
+            ).build();
+        }
+        
+        List<Picture> pictures = this.sm.pickRandomPictures(s, 10);
+        
+        return Response.status(Response.Status.OK).entity(buildJsonSerie(s, pictures, tokenGame)).build();
     }
     
     @POST
@@ -207,7 +256,53 @@ public class SerieRessource {
         return Response.created(uri).build();
        
     }
+    
+    private JsonObject buildJsonSerie(Serie s, List<Picture> pictures, String token){
+        
+        JsonArrayBuilder picturesJA = Json.createArrayBuilder();
+        
+        pictures.forEach((picture ->{
+            JsonObject coords = Json.createObjectBuilder()
+                .add("lat", picture.getLat())
+                .add("lng", picture.getLng())
+                .build();
+            
+            JsonObject pic = Json.createObjectBuilder()
+                .add("lat", picture.getUrl())
+                .add("coords", coords)
+                .build();
+            
+            picturesJA.add(pic);
+        }));
+        
+        JsonObject coords = Json.createObjectBuilder()
+                .add("lat", s.getLat())
+                .add("lng", s.getLng())
+                .build();
+        
+        JsonObject difficulty = Json.createObjectBuilder()
+                .add("id", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getId())
+                .add("name", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getLevel())
+                .add("token", token)
+                .build();
 
+        
+        JsonObject serie = Json.createObjectBuilder()
+                .add("id", s.getId())
+                .add("name", s.getName())
+                .add("city", s.getCity())
+                .add("description", s.getDescription())
+                .add("coords", coords)
+                .add("difficulty", difficulty)
+                .add("pictures", picturesJA)
+                .build();
+        
+        return Json.createObjectBuilder()
+                .add("type", "ressource")
+                .add("serie", serie)
+                .build();
+    }
+    
     private JsonObject buildJsonSeries(List<Serie> s){
         JsonArrayBuilder series = Json.createArrayBuilder();
         
