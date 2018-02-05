@@ -23,18 +23,18 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.lpro.control.KeyManagement;
 import org.lpro.control.PasswordManagement;
-import org.lpro.entity.Utilisateur;
+import org.lpro.entity.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Path("/authentification")
-@Api(value = "Utilisateur")
-public class UtilisateurBoundary {
+@Api(value = "User")
+public class UserBoundary {
 
     @Inject
     private KeyManagement keyManagement;
 
     @Inject
-    private UtilisateurManager um;
+    private UserManager um;
 
     @Context
     private UriInfo uriInfo;
@@ -47,14 +47,14 @@ public class UtilisateurBoundary {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")})
-    public Response authentifieUtilisateur(Utilisateur utilisateur) {
+    public Response authentifieUser(User utilisateur) {
         try {
             String mail = utilisateur.getMail();
             String password = utilisateur.getPassword();
 
             String digest = PasswordManagement.digestPassword(password);
             System.out.println("hash " + digest);
-            Utilisateur one = this.um.findUtilisateur(mail);
+            User one = this.um.findUser(mail);
 
             if (one != null) {
                 this.authentifie(mail, password, one);
@@ -69,7 +69,7 @@ public class UtilisateurBoundary {
         }
     }
 
-    private void authentifie(String mail, String password, Utilisateur utilisateur) throws Exception {
+    private void authentifie(String mail, String password, User utilisateur) throws Exception {
         if (utilisateur != null) {
             if (mail.equals(utilisateur.getMail()) && BCrypt.checkpw(password, utilisateur.getPassword())) {
 

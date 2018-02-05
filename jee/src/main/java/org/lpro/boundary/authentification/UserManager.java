@@ -1,6 +1,6 @@
 package org.lpro.boundary.authentification;
 
-import org.lpro.entity.Utilisateur;
+import org.lpro.entity.User;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
@@ -8,19 +8,19 @@ import javax.transaction.Transactional;
 
 @Stateless
 @Transactional
-public class UtilisateurManager {
+public class UserManager {
 
     @PersistenceContext
     EntityManager em;
 
-    public Utilisateur findById(String id) {
-        return this.em.find(Utilisateur.class, id);
+    public User findById(String id) {
+        return this.em.find(User.class, id);
     }
 
-    public Utilisateur findUtilisateur(String mail) {
-        Utilisateur u = null;
+    public User findUser(String mail) {
+        User u = null;
 
-        TypedQuery<Utilisateur> query = this.em.createQuery("SELECT u FROM Utilisateur u WHERE u.mail = :mail", Utilisateur.class);
+        TypedQuery<User> query = this.em.createQuery("SELECT u FROM User u WHERE u.mail = :mail", User.class);
         query.setParameter("mail", mail);
 
         try {
