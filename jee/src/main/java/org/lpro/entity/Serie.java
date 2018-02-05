@@ -28,16 +28,21 @@ public class Serie implements Serializable {
 
     @NotNull
     private String city;
-
+    
+    @NotNull
+    private double lat, lng;
+    
     @ManyToMany
     private Set<Picture> picture = new HashSet<Picture>();
 
     public Serie() { }
 
-    public Serie(String name, String description, String city) {
+    public Serie(String name, String description, String city, double lat, double lng) {
         this.name = name;
         this.description = description;
         this.city = city;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public String getId() {
@@ -51,7 +56,7 @@ public class Serie implements Serializable {
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -71,7 +76,23 @@ public class Serie implements Serializable {
     public void setCity(String city) {
         this.city = city;
     }
+    
+    public double getLat() {
+        return lat;
+    }
 
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+    
     public Set<Picture> getPicture() {
         return picture;
     }
