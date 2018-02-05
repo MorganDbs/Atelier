@@ -1,4 +1,4 @@
-package org.lpro.boundary.authentification;
+package org.lpro.boundary.account.signin;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
@@ -21,20 +22,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.lpro.boundary.account.AccountManager;
 import org.lpro.control.KeyManagement;
 import org.lpro.control.PasswordManagement;
-import org.lpro.entity.User;
+import org.lpro.entity.Account;
 import org.mindrot.jbcrypt.BCrypt;
 
-@Path("/authentification")
-@Api(value = "User")
-public class UserBoundary {
+@Path("/signin")
+@Api(value = "Connexion")
+public class SigninBoundary {
 
     @Inject
     private KeyManagement keyManagement;
 
     @Inject
-    private UserManager um;
+    private AccountManager am;
 
     @Context
     private UriInfo uriInfo;
@@ -47,37 +49,54 @@ public class UserBoundary {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")})
-    public Response authentifieUser(User utilisateur) {
+    public Response signinUser(Account utilisateur) {
         try {
             String mail = utilisateur.getMail();
             String password = utilisateur.getPassword();
 
             String digest = PasswordManagement.digestPassword(password);
             System.out.println("hash " + digest);
-            User one = this.um.findUser(mail);
+            Account one = this.am.findUser(mail);
 
             if (one != null) {
-                this.authentifie(mail, password, one);
+                this.signin(mail, password, one);
 
                 String token = this.issueToken(mail);
-                return Response.ok().header(AUTHORIZATION, "Bearer " + token).build();
+
+                System.out.println("=========================> " + token);
+
+                this.am.signin(one, token);
+
+                return Response.ok(Json.createObjectBuilder()
+                        .add("token", "Bearer " + token)
+                        .add("success", "Connexion réussie")
+                        .build()
+                ).build();
             } else {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
+                return Response.status(Response.Status.UNAUTHORIZED).entity(
+                        Json.createObjectBuilder()
+                                .add("error", "Ce compte n'existe pas")
+                                .build()
+                ).build();
             }
         } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "L'adresse mail ou le mot de passe est incorrect")
+                            .build()
+            ).build();
         }
     }
 
-    private void authentifie(String mail, String password, User utilisateur) throws Exception {
-        if (utilisateur != null) {
-            if (mail.equals(utilisateur.getMail()) && BCrypt.checkpw(password, utilisateur.getPassword())) {
+    private void signin(String mail, String password, Account user) throws Exception {
+        if (user != null) {
+            if (mail.equals(user.getMail()) && BCrypt.checkpw(password, user.getPassword())) {
 
             } else {
-                throw new NotAuthorizedException("Problème d'authentification");
+                throw new NotAuthorizedException("Problème d'signin");
             }
         } else {
-            throw new NotAuthorizedException("Utilisateur introuvable");
+            throw new NotAuthorizedException("Compte introuvable");
         }
     }
 
