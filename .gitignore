@@ -1,0 +1,12 @@
+jee/.idea/
+jee/target/
+jee/nbproject/private/
+jee/build/
+jee/nbbuild/
+jee/dist/
+jee/nbdist/
+jee/nbactions.xml
+jee/nb-configuration.xml
+vuejs/webAppBackOffice/.idea/
+vuejs/webAppPlayer/.idea/
+
