@@ -56,7 +56,7 @@ public class SignupBoundary {
                                         .add("id_user", user.getId())
                                         .add("fullname", user.getFullname())
                                         .add("mail", user.getMail())
-                                        .add("success", "Le compte a bien été créé")
+                                        .add("success", "Inscription réussie")
                                         .build()
                                 ).build();
                             } else {
