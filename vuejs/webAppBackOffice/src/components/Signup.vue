@@ -68,6 +68,10 @@
                   alert("Votre email est déjà utilisé.");
                 }
               })
+          }).catch((error) => {
+            if (error.response.status === 422) {
+              alert("Votre email est déjà utilisé.");
+            }
           })
 
         } else {
