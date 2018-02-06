@@ -18,17 +18,13 @@ const router =  new Router({
       name: 'Signup',
       component: Signup
     },
+
     {
       path: '/',
       name: 'Home',
       component: Home
     }
-    ,
-    {
-      path: '/PageCo',
-      name: 'PageCo',
-      component: PageCo
-    }
+
   ]
 })
 

@@ -1,13 +1,18 @@
 <template>
   <div class="hello">
     <div classe="header">
-      <div class="jumbotron jumbotron-fluid">
-          <div classe="img">
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
-          </div>
-          <h1 class="display-4">Fluid jumbotron</h1>
-          <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+      <div class="jumbotron">
+
+        <div classe="img">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
+        </div>
+        <div class="descGeoquizz">
+          <h1 class="display-4">Geo Quizz</h1>
+          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">C'est partie !</p>
+        </div>
       </div>
+      <hr/>
 
     </div>
  <div class="bloc">
@@ -26,7 +31,7 @@
 </template>
 
 <script>
-  //import confApi from '../configApi'
+  //import configApi from '../configApi'
   import router from '../router'
 export default {
   name: 'Signin',
@@ -40,7 +45,7 @@ export default {
   },
   methods: {
     /*signin(){
-      confApi.post('/members/signin', this.members).then((response)=> {
+      configApi.post('/members/signin', this.members).then((response)=> {
         sessionStorage.setItem("isConnected", "Connect")
         sessionStorage.setItem("token", response.data.token)
         sessionStorage.setItem("id", response.data._id)
@@ -110,5 +115,18 @@ div {
 .bloc{
   background-color: #f2f2f2;
 
+}
+.img{
+  background-color: cornflowerblue;
+  align-items: flex-start;
+}
+.jumbotron{
+  display: flex;
+  flex-direction: row;
+}
+.descGeoquizz{
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
 }
 </style>

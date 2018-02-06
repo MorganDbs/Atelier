@@ -28,7 +28,7 @@
 </template>
 
 <script>
- // import confApi from '../configApi'
+ // import configApi from '../configApi'
   import router from '../router'
 
   export default {

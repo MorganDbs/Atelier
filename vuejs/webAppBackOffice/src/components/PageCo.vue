@@ -4,7 +4,7 @@
     <div classe="header">
       <div class="jumbotron">
           <div classe="img">
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
+            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="geoQuizz">
           </div>
           <h1 class="display-4">Fluid jumbotron</h1>
           <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  //import confApi from '../configApi'
+  //import configApi from '../configApi'
   import router from '../router'
   export default {
 
@@ -43,13 +43,13 @@
       }
     },
     created() {
-      /**confApi.get('/members').then((response) =>{
+      /**configApi.get('/members').then((response) =>{
         this.members= response.data;
       }).catch((error)=> {
         console.log(error);
       })
 
-      confApi.get('/channels').then((response) =>{
+      configApi.get('/channels').then((response) =>{
         this.channels= response.data;
       }).catch((error)=> {
         console.log(error);
@@ -60,7 +60,7 @@
     methods: {
       /*
       logOut(){
-        confApi.delete('members/signout')
+        configApi.delete('members/signout')
           .then((response)=> {
           console.log(response);
           alert("You're disconnect");
