@@ -11,7 +11,7 @@
 						:label-cols="2"
 						label-class="text-sm-right"
 						label-for="nickname">
-						<b-form-input id="nickname" required></b-form-input>
+						<b-form-input id="nickname" v-model="nickname" required></b-form-input>
 					</b-form-group>
 
 					<b-form-group horizontal
@@ -20,9 +20,9 @@
 						:label-cols="2"
 						label-class="text-sm-right"
 						label-for="difficulty">
-						<b-form-select id="difficulty" v-model="selected" class="mb-2 mt-2 mr-sm-2 mb-sm-0">
-							<option slot="first" :value="null" disabled>Difficulté...</option>
-							<option v-for="difficulty in difficulties" value="difficulty.id">{{ difficulty.name }}</option>
+						<b-form-select id="difficulty" v-model="difficulty" class="mb-2 mt-2 mr-sm-2 mb-sm-0">
+							<option slot="first" :value="null" disabled>Choisir la difficulté...</option>
+							<option v-for="difficulty in difficulties" :key="difficulty.id" :value="difficulty">{{ difficulty.name }}</option>
 						</b-form-select>
 					</b-form-group>
 				</b-card>
@@ -36,7 +36,7 @@
 								<p class="card-text">
 									<h5>{{ serie.name }}</h5>
 									Ville : {{ serie.city }}<br />{{ serie.description }}
-									<b-button variant="primary" class="mt-4 btn-block">Jouer</b-button>
+									<b-button variant="primary" class="mt-4 btn-block" @click="play({serie, difficulty, nickname})">Jouer</b-button>
 								</p>
 							</b-card>
 						</b-card-group>
@@ -44,95 +44,39 @@
 				</b-row>
 			</b-col>
 		</b-row>
+		<b-button variant="primary" class="mt-4 btn-block" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
 	</b-container>
 </template>
 
 <script>
-	
+	import { mapGetters, mapActions } from 'vuex'
+
 	export default {
-		data() {
+		data: () => {
 			return {
-				selected: null,
-				series: [
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Nancy",
-						city: "Nancy",
-						description: "Découvrez les endroits clés de Nancy",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					},
-					{
-						id: "abcdefgh-0123-8901-4567-abcdefghijklmnop",
-						name: "Paris",
-						city: "Paris",
-						description: "Découvrez les endroits clés de Paris",
-						img: "http://via.placeholder.com/350x150"
-					}
-				],
+				difficulty: null,
+				nickname: null,
+				serie: {
+					id: "a",
+					name: "Test"
+				},
 				difficulties: [
-					{
-						id: "abcdefgh-0123-4567-8901-abcdefghijklmnop",
-						name: "Facile"
-					},
-					{
-						id: "abcdefgh-0123-4567-8901-abcdefghijklmnop",
-						name: "Moyen"
-					},
-					{
-						id: "abcdefgh-4567-0123-8901-abcdefghijklmnop",
-						name: "Expert"
-					}
+					{ id: "A", name: 'a' },
+					{ id: "B", name: 'b' },
+					{ id: "C", name: 'c' },
 				]
 			}
+		},
+		computed: {
+			...mapGetters(
+                {
+                    series: 'geoquizz/getSeries',
+                    // difficulties: 'geoquizz/getDifficulties'
+                }
+            )
+		},
+		methods: {
+			...mapActions('geoquizz', ['sendGameInfo'])
 		}
 	}
 

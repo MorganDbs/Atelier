@@ -59,8 +59,10 @@ export default {
 	},
 	actions: {
 		sendGameInfo: ({commit}, data) => {
-			api.post('/series', {
-
+			api.post('/serie', {
+				id_serie: data.serie.id,
+				id_difficulty: data.difficulty.id,
+				nickname: data.nickname
 			})
 			.then((response) => {
 				commit('setNickname', data.nickname)
@@ -86,7 +88,15 @@ export default {
 			})
 		},
 		sendScore: ({state}) => {
-			
+			api.put('/games?token=' + state.token, {
+				score: state.game.score
+			})
+			.then((response) => {
+
+			})
+			.catch((error) => {
+				console.log(error)
+			})
 		}
 	}
 }

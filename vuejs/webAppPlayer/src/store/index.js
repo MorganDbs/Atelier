@@ -6,7 +6,7 @@ import router from "@/router"
 import createPersistedState from 'vuex-persistedstate'
 import { createFlashStore } from 'vuex-flash'
 
-import GeoQuizz from '@/store/modules/geoquizz'
+import geoquizz from '@/store/modules/geoquizz'
 
 Vue.use(Vuex)
 
@@ -16,7 +16,7 @@ export default new Vuex.Store({
 		createFlashStore()
 	],
 	modules: {
-		GeoQuizz
+		geoquizz
 	},
 	state: { },
 	mutations: { },
