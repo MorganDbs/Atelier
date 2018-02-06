@@ -72,41 +72,6 @@ public class SerieRessource {
         return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d)).build();
     }
 
-    @GET
-    @Path("{id}")
-    @ApiOperation(value = "Récupère une série", notes = "Renvoie le JSON associé à un série")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found"),
-        @ApiResponse(code = 500, message = "Internal server error")})
-    public Response getSerie(@PathParam("id") String id, @QueryParam("token") String token, @HeaderParam("X-geoquizz-token") String header, @Context UriInfo uriInfo) {
-        Serie s = this.sm.findById(id);
-        Boolean flag;
-        
-        if(s == null){
-            return Response.status(Response.Status.NOT_FOUND).entity(
-                    Json.createObjectBuilder()
-                            .add("error", "La série n'existe pas")
-                            .build()
-            ).build();
-        }
-
-        if (token == null && header == null) {
-            return Response.status(Response.Status.FORBIDDEN).entity(
-                    Json.createObjectBuilder()
-                            .add("error", "Il faut renseigner un token")
-                            .build()
-            ).build();
-        }
-
-        String tokenGame = (token != null) ? token : header;
-
-        List<Picture> pictures = this.sm.pickRandomPictures(s, 10);
-
-        return Response.status(Response.Status.OK).entity(buildJsonSerie(s, pictures, tokenGame)).build();
-    }
-
     @POST
     @Secured
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
@@ -247,60 +212,13 @@ public class SerieRessource {
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
         
         JsonObject succes = Json.createObjectBuilder()
-                .add("succes", "La série a été crée")
+                .add("success", "La série a été crée")
                 .build();
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
 
         return Response.created(uri).entity(succes).build();
     }
-
-    private JsonObject buildJsonSerie(Serie s, List<Picture> pictures, String token){
-
-        JsonArrayBuilder picturesJA = Json.createArrayBuilder();
-
-        pictures.forEach((picture ->{
-            JsonObject coords = Json.createObjectBuilder()
-                    .add("lat", picture.getLat())
-                    .add("lng", picture.getLng())
-                    .build();
-
-            JsonObject pic = Json.createObjectBuilder()
-                    .add("lat", picture.getUrl())
-                    .add("coords", coords)
-                    .build();
-
-            picturesJA.add(pic);
-        }));
-
-        JsonObject coords = Json.createObjectBuilder()
-                .add("lat", s.getLat())
-                .add("lng", s.getLng())
-                .build();
-
-        JsonObject difficulty = Json.createObjectBuilder()
-                .add("id", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getId())
-                .add("name", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getLevel())
-                .add("token", token)
-                .build();
-
-
-        JsonObject serie = Json.createObjectBuilder()
-                .add("id", s.getId())
-                .add("name", s.getName())
-                .add("city", s.getCity())
-                .add("description", s.getDescription())
-                .add("coords", coords)
-                .add("difficulty", difficulty)
-                .add("pictures", picturesJA)
-                .build();
-
-        return Json.createObjectBuilder()
-                .add("type", "ressource")
-                .add("serie", serie)
-                .build();
-    }
-
 
     private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();

@@ -52,9 +52,19 @@ public class GameManager {
         return query.getSingleResult();
     }
     
+    public Game findByToken(String token) {
+        TypedQuery<Game> query = em.createQuery("SELECT g FROM Game g WHERE token = '"+token+"'", Game.class);
+        return query.getSingleResult();
+    }
+    
     public Game create(Game g){
         g.setId(UUID.randomUUID().toString());
         g.setToken(new Token().generateRandomString());
+        return this.em.merge(g);
+    }
+    
+    public Game updateScore(Game g, int score){
+        g.setScore(score);
         return this.em.merge(g);
     }
 }

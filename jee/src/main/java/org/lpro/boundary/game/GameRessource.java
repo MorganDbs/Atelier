@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.lpro.boundary.score;
+package org.lpro.boundary.game;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,15 +19,17 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.lpro.boundary.difficulty.DifficultyManager;
-import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.serie.SerieManager;
 import org.lpro.entity.Difficulty;
 import org.lpro.entity.Game;
@@ -56,8 +58,7 @@ public class GameRessource {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 417, message = "EXPECTATION_FAILED"),
         @ApiResponse(code = 500, message = "Internal server error")})
-    public Response addScore(JsonObject jsonScore, @Context UriInfo uriInfo) throws java.text.ParseException {
-        System.out.println("qsbdhklqsmbdjlkqsljqdskldsqlmk");
+    public Response createGame(JsonObject jsonScore, @Context UriInfo uriInfo) throws java.text.ParseException {
         JsonObjectBuilder errors = Json.createObjectBuilder();
         String errorsList = "";
         boolean flag = false;
@@ -124,6 +125,59 @@ public class GameRessource {
        
     }
     
+    @PUT
+    @ApiOperation(value = "Crée une game", notes = "Crée une game à partir du JSON fourni")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created"),
+        @ApiResponse(code = 417, message = "EXPECTATION_FAILED"),
+        @ApiResponse(code = 500, message = "Internal server error")})
+    public Response scoreGame(JsonObject jsonScore, @QueryParam("token") String token, @HeaderParam("X-geoquizz-token") String header, @Context UriInfo uriInfo) throws java.text.ParseException {
+        
+        if (token == null && header == null) {
+            return Response.status(Response.Status.FORBIDDEN).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Il faut renseigner un token")
+                            .build()
+            ).build();
+        }
+
+        String tokenGame = (token != null) ? token : header;
+
+        Game g = this.gm.findByToken(tokenGame);
+
+        if(g == null){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Pas de game pour ce token")
+                            .build()
+            ).build();
+        }
+        
+        if(!jsonScore.containsKey("score") || jsonScore.isNull("score") || jsonScore.getString("score").isEmpty()){
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Il faut rentrer un score")
+                            .build()
+            ).build();
+        }else if(!Pattern.matches("^\\d$", jsonScore.getString("score"))){
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Il faut respecter la casse du score")
+                            .build()
+            ).build();
+        }
+        
+        g = this.gm.updateScore(g, Integer.parseInt(jsonScore.getString("score")));
+        
+        JsonObject succes = Json.createObjectBuilder()
+                .add("success", "Score enregistré")
+                .build();
+        
+        URI uri = uriInfo.getAbsolutePathBuilder().path("/"+g.getId()).build();
+        return Response.created(uri).entity(succes).build();
+       
+    }
+    
     private JsonObject buildGameJson(Serie s, Game g, List<Picture> pictures){
 
         JsonArrayBuilder picturesJA = Json.createArrayBuilder();
@@ -135,7 +189,7 @@ public class GameRessource {
                     .build();
 
             JsonObject pic = Json.createObjectBuilder()
-                    .add("lat", picture.getUrl())
+                    .add("picture", picture.getUrl())
                     .add("coords", coords)
                     .build();
 
@@ -147,25 +201,18 @@ public class GameRessource {
                 .add("lng", s.getLng())
                 .build();
 
-        JsonObject game = Json.createObjectBuilder()
-                .add("id", g.getId())
-                .add("nickname", g.getNickname())
-                .add("token", g.getToken())
-                .build();
-
-
         JsonObject serie = Json.createObjectBuilder()
                 .add("id", s.getId())
                 .add("name", s.getName())
                 .add("city", s.getCity())
                 .add("description", s.getDescription())
                 .add("coords", coords)
-                .add("game", game)
                 .add("pictures", picturesJA)
                 .build();
 
         return Json.createObjectBuilder()
                 .add("type", "ressource")
+                .add("token", g.getToken())
                 .add("serie", serie)
                 .build();
     }
