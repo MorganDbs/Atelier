@@ -10,35 +10,36 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.URI;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.lpro.boundary.difficulty.DifficultyManager;
+import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.serie.SerieManager;
 import org.lpro.entity.Difficulty;
-import org.lpro.entity.Score;
+import org.lpro.entity.Game;
+import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 
 @Stateless
-@Path("scores")
+@Path("games")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Score")
-public class ScoreRessource {
+@Api(value = "Game")
+public class GameRessource {
     
     @Inject
     SerieManager sm;
@@ -47,29 +48,20 @@ public class ScoreRessource {
     DifficultyManager dm;
     
     @Inject
-    ScoreManager scorm;
+    GameManager gm;
     
     @POST
-    @ApiOperation(value = "Crée un score", notes = "Crée un score à partir du JSON fourni")
+    @ApiOperation(value = "Crée une game", notes = "Crée une game à partir du JSON fourni")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 417, message = "EXPECTATION_FAILED"),
         @ApiResponse(code = 500, message = "Internal server error")})
-    public Response addScore(JsonObject scoreBody, @QueryParam("token") String token, @HeaderParam("X-geoguizz-token") String header, @Context UriInfo uriInfo) throws java.text.ParseException {
-        Difficulty d;
-        
+    public Response addScore(JsonObject jsonScore, @Context UriInfo uriInfo) throws java.text.ParseException {
         JsonObjectBuilder errors = Json.createObjectBuilder();
-        JsonObject jsonScore = null;
         String errorsList = "";
-        Boolean flag = false;
-        boolean flag_token = false;
+        boolean flag = false;
         
-        if(!scoreBody.containsKey("score") || scoreBody.isNull("score")){
-            return Response.status(Response.Status.EXPECTATION_FAILED).build();
-        }else{
-            jsonScore = scoreBody.getJsonObject("score");
-        }
         
         if(!jsonScore.containsKey("id_serie") || jsonScore.isNull("id_serie") || jsonScore.getString("id_serie").isEmpty()){
             errorsList += "Il faut renseigner un id de série. ";
@@ -89,15 +81,6 @@ public class ScoreRessource {
             ).build();
         }
         
-        if (token == null && header == null) {
-            return Response.status(Response.Status.FORBIDDEN).entity(
-                    Json.createObjectBuilder()
-                            .add("error", "Il faut renseigner un token")
-                            .build()
-            ).build();
-        }
-        
-        String tokenGame = (token != null) ? token : header;
 
         if(!jsonScore.containsKey("nickname") || jsonScore.isNull("nickname") || jsonScore.getString("nickname").isEmpty()){
             errorsList += "Il faut renseigner un nickname. ";
@@ -115,20 +98,16 @@ public class ScoreRessource {
             flag = true;
         }
         
-        try{
-          d = this.dm.findById(jsonScore.getString("id_difficulty"));
-        }catch(NullPointerException e){
+        
+        Difficulty d = this.dm.findById(jsonScore.getString("id_difficulty"));
+        
+        if(d == null){
             return Response.status(Response.Status.NOT_FOUND).entity(
                     Json.createObjectBuilder()
                             .add("error", "La difficulte n'existe pas")
                             .build()
             ).build();
-        }      
-        
-        if(!jsonScore.containsKey("score") || jsonScore.isNull("score")){
-            errorsList += "Il faut renseigner un score. ";
-            flag = true;
-        }
+        }  
         
         if(flag){                        
             errors.add("errors", errorsList);
@@ -136,15 +115,58 @@ public class ScoreRessource {
             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors).build();
         }
         
-        Score score = new Score(jsonScore.getString("id_serie"), jsonScore.getString("id_difficulty"), jsonScore.getString("nickname"), jsonScore.getInt("score"));
-        score = this.scorm.saveNewScore(score);
+        Game game = new Game(jsonScore.getString("id_serie"), jsonScore.getString("id_difficulty"), jsonScore.getString("nickname"));
+        game = this.gm.create(game);
+        List<Picture> pictures = this.sm.pickRandomPictures(s, 10);
         
-        JsonObject succes = Json.createObjectBuilder()
-                .add("succes", "Le score a été sauvegardé")
-                .build();
-        
-        URI uri = uriInfo.getAbsolutePathBuilder().path("/"+score.getId()).build();
-        return Response.created(uri).entity(succes).build();
+        URI uri = uriInfo.getAbsolutePathBuilder().path("/"+game.getId()).build();
+        return Response.created(uri).entity(this.buildGameJson(s, game, pictures)).build();
        
+    }
+    
+    private JsonObject buildGameJson(Serie s, Game g, List<Picture> pictures){
+
+        JsonArrayBuilder picturesJA = Json.createArrayBuilder();
+
+        pictures.forEach((picture ->{
+            JsonObject coords = Json.createObjectBuilder()
+                    .add("lat", picture.getLat())
+                    .add("lng", picture.getLng())
+                    .build();
+
+            JsonObject pic = Json.createObjectBuilder()
+                    .add("lat", picture.getUrl())
+                    .add("coords", coords)
+                    .build();
+
+            picturesJA.add(pic);
+        }));
+
+        JsonObject coords = Json.createObjectBuilder()
+                .add("lat", s.getLat())
+                .add("lng", s.getLng())
+                .build();
+
+        JsonObject game = Json.createObjectBuilder()
+                .add("id", g.getId())
+                .add("nickname", g.getNickname())
+                .add("token", g.getToken())
+                .build();
+
+
+        JsonObject serie = Json.createObjectBuilder()
+                .add("id", s.getId())
+                .add("name", s.getName())
+                .add("city", s.getCity())
+                .add("description", s.getDescription())
+                .add("coords", coords)
+                .add("game", game)
+                .add("pictures", picturesJA)
+                .build();
+
+        return Json.createObjectBuilder()
+                .add("type", "ressource")
+                .add("serie", serie)
+                .build();
     }
 }

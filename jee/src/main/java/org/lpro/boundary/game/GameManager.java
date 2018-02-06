@@ -52,17 +52,9 @@ public class GameManager {
         return query.getSingleResult();
     }
     
-    public void addGames(Serie s){
-        List<Difficulty> d = this.dm.findAll();
-        
-        d.forEach(df ->{
-           this.save(new Game(s.getId(), df.getId())); 
-        });
-    }
-    
-    public void save(Game g){
+    public Game create(Game g){
         g.setId(UUID.randomUUID().toString());
         g.setToken(new Token().generateRandomString());
-        this.em.merge(g);
+        return this.em.merge(g);
     }
 }
