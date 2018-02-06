@@ -35,7 +35,7 @@ public class SignoutBoundary {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 500, message = "Internal server error")})
     public Response signoutUser(
-            @DefaultValue("") @QueryParam("token") String tokenParam,
+            @DefaultValue("") @QueryParam("tokenCo") String tokenParam,
             @DefaultValue("") @HeaderParam("Authorization") String tokenHeader
     ) {
         if (tokenParam.isEmpty() && tokenHeader.isEmpty()) {
