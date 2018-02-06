@@ -18,16 +18,13 @@ public class JAXRSConfiguration extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
 
-        /*classes.add(com.github.phillipkruger.apiee.ApieeService.class);
-        classes.add(org.lpro.boundary.categorie.CategorieRessource.class);
-        classes.add(org.lpro.boundary.categorie.exception.CategorieNotFound.class);
-        classes.add(org.lpro.boundary.categorie.mapper.CategorieNotFoundMapper.class);
-        classes.add(org.lpro.boundary.sandwich.SandwichRessource.class);
-        classes.add(org.lpro.boundary.sandwich.exception.SandwichNotFound.class);
-        classes.add(org.lpro.boundary.sandwich.mapper.SandwichNotFoundMapper.class);
-        classes.add(org.lpro.boundary.authentification.UtilisateurBoundary.class);
-        classes.add(org.lpro.boundary.carte.CarteRessource.class);
-        classes.add(org.lpro.boundary.commande.CommandeRessource.class);*/
+        classes.add(org.lpro.provider.cors.CORSRequestFilter.class);
+        classes.add(org.lpro.provider.cors.CORSResponseFilter.class);
+        classes.add(com.github.phillipkruger.apiee.ApieeService.class);
+        classes.add(org.lpro.boundary.account.signup.SignupBoundary.class);
+        classes.add(org.lpro.boundary.account.signin.SigninBoundary.class);
+        classes.add(org.lpro.boundary.serie.SerieRessource.class);
+        classes.add(org.lpro.boundary.score.ScoreRessource.class);
 
         return classes;
     }
