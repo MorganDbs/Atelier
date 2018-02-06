@@ -36,6 +36,7 @@ import javax.ws.rs.core.UriInfo;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
+import org.lpro.entity.Difficulty;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
@@ -67,7 +68,8 @@ public class SerieRessource {
             @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSeries() {
         List<Serie> s = this.sm.findAll();
-        return Response.status(Response.Status.OK).entity(buildJsonSeries(s)).build();
+        List<Difficulty> d = this.dm.findAll();
+        return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d)).build();
     }
 
     @GET
@@ -309,11 +311,11 @@ public class SerieRessource {
                 .build();
     }
 
-    private JsonObject buildJsonSeries(List<Serie> s){
+    private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
 
         s.forEach((serie)->{
-            JsonArrayBuilder difficulties = Json.createArrayBuilder();
+            /*JsonArrayBuilder difficulties = Json.createArrayBuilder();
             serie.getGame().forEach((g)->{
                 JsonObject difficulty = Json.createObjectBuilder()
                         .add("id", g.getId_difficulty())
@@ -321,22 +323,34 @@ public class SerieRessource {
                         .add("name", this.dm.findById(this.gm.findById(g.getId()).getId_difficulty()).getLevel())
                         .build();
                 difficulties.add(difficulty);
-            });
+            });*/
 
             JsonObject ser = Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
-                    .add("difficulties", difficulties)
+                    //.add("difficulties", difficulties)
                     .build();
 
             series.add(ser);
         });
 
+        JsonArrayBuilder difficulties = Json.createArrayBuilder();
+
+        d.forEach((difficulty) -> {
+            JsonObject json = Json.createObjectBuilder()
+                    .add("id", difficulty.getId())
+                    .add("name", difficulty.getLevel())
+                    .build();
+
+            difficulties.add(json);
+        });
+
         return Json.createObjectBuilder()
                 .add("type", "collection")
-                .add("series", series)
+                .add("difficulties", difficulties.build())
+                .add("series", series.build())
                 .build();
     }
 }
