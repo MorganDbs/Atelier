@@ -63,8 +63,6 @@ public class SigninBoundary {
 
                 String token = this.issueToken(mail);
 
-                this.am.signin(one, token);
-
                 return Response.ok(Json.createObjectBuilder()
                         .add("token", "Bearer " + token)
                         .add("success", "Connexion réussie")
