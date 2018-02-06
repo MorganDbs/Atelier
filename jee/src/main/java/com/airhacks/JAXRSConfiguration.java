@@ -22,6 +22,7 @@ public class JAXRSConfiguration extends Application {
         classes.add(org.lpro.boundary.account.signup.SignupBoundary.class);
         classes.add(org.lpro.boundary.account.signin.SigninBoundary.class);
         classes.add(org.lpro.boundary.account.signout.SignoutBoundary.class);
+        classes.add(org.lpro.boundary.serie.SerieRessource.class);
 
         return classes;
     }
