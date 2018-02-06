@@ -38,6 +38,7 @@ import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
+import org.lpro.provider.Secured;
 
 @Stateless
 @Path("series")
@@ -45,34 +46,36 @@ import org.lpro.entity.Serie;
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Série")
 public class SerieRessource {
-    
+
     @Inject
     SerieManager sm;
-    
+
     @Inject
     PictureManager pm;
-    
+
     @Inject
     GameManager gm;
-    
+
     @Inject
     DifficultyManager dm;
-    
+
     @GET
     @ApiOperation(value = "Récupère toutes les séries", notes = "Renvoie le JSON associé à la collection de séries")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 500, message = "Internal server error")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSeries() {
         List<Serie> s = this.sm.findAll();
         return Response.status(Response.Status.OK).entity(buildJsonSeries(s)).build();
     }
-    
+
     @GET
     @Path("{id}")
     @ApiOperation(value = "Récupère une série", notes = "Renvoie le JSON associé à un série")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSerie(@PathParam("id") String id, @QueryParam("token") String token, @HeaderParam("X-geoguizz-token") String header, @Context UriInfo uriInfo) {
@@ -86,7 +89,7 @@ public class SerieRessource {
                             .build()
             ).build();
         }
-        
+
         if (token == null && header == null) {
             return Response.status(Response.Status.FORBIDDEN).entity(
                     Json.createObjectBuilder()
@@ -94,11 +97,11 @@ public class SerieRessource {
                             .build()
             ).build();
         }
-        
+
         String tokenGame = (token != null) ? token : header;
-        
+
         flag = s.getGame().stream().anyMatch(t -> {return tokenGame.equals(t.getToken()); });
-        
+
         if(!flag){
             return Response.status(Response.Status.NOT_FOUND).entity(
                     Json.createObjectBuilder()
@@ -106,18 +109,19 @@ public class SerieRessource {
                             .build()
             ).build();
         }
-        
+
         List<Picture> pictures = this.sm.pickRandomPictures(s, 10);
-        
+
         return Response.status(Response.Status.OK).entity(buildJsonSerie(s, pictures, tokenGame)).build();
     }
-    
+
     @POST
+    @Secured
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created"),
-        @ApiResponse(code = 417, message = "EXPECTATION_FAILED"),
-        @ApiResponse(code = 500, message = "Internal server error")})
+            @ApiResponse(code = 201, message = "Created"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     public Response addSerie(JsonObject serieParam, @Context UriInfo uriInfo) throws java.text.ParseException {
 
         JsonObjectBuilder errors = Json.createObjectBuilder();
@@ -128,13 +132,13 @@ public class SerieRessource {
         String errorsList = "";
         Boolean flag_errors = false;
         Boolean flag_errors_pictures = false;
-        
+
         if(!serieParam.containsKey("serie") || serieParam.isNull("serie")){
             return Response.status(Response.Status.EXPECTATION_FAILED).build();
         }else{
             jsonSerie = serieParam.getJsonObject("serie");
         }
-        
+
         if(!jsonSerie.containsKey("name") || jsonSerie.isNull("name") || jsonSerie.getString("name").isEmpty()){
             errorsList += "Il faut renseigner un nom de série. ";
             flag_errors = true;
@@ -142,14 +146,14 @@ public class SerieRessource {
             errorsList += "Il faut respecter la casse du nom de série. ";
             flag_errors = true;
         }
-        
+
         if(jsonSerie.containsKey("description") && Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("description"))){
-            
+
         }else{
             errorsList += "Il faut respecter la casse de la description. ";
             flag_errors = true;
         }
-        
+
         if(!jsonSerie.containsKey("city") || jsonSerie.isNull("city") || jsonSerie.getString("city").isEmpty()){
             errorsList += "Il faut renseigner une ville. ";
             flag_errors = true;
@@ -157,21 +161,21 @@ public class SerieRessource {
             errorsList += "Il faut respecter la casse du nom de city. ";
             flag_errors = true;
         }
-        
+
         if(!jsonSerie.containsKey("coords") || jsonSerie.isNull("coords")){
             errorsList += "Il faut renseigner les coordonnées d'une série. ";
             flag_errors = true;
         }else{
             serieCoord = jsonSerie.getJsonObject("coords");
-            
+
             if(!serieCoord.containsKey("lat") || serieCoord.isNull("lat") || serieCoord.getString("lat").isEmpty()){
-                errorsList += "Il faut renseigner la lattitude de la série. ";
+                errorsList += "Il faut renseigner la latitude de la série. ";
                 flag_errors = true;
             }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$", serieCoord.getString("lat"))){
-                errorsList += "Il faut respecter la ccasse de la lattitude de la ville. ";
+                errorsList += "Il faut respecter la casse de la latitude de la ville. ";
                 flag_errors = true;
             }
-            
+
             if(!serieCoord.containsKey("lng") || serieCoord.isNull("lng") || serieCoord.getString("lng").isEmpty()){
                 errorsList += "Il faut renseigner la longitude de la série. ";
                 flag_errors = true;
@@ -180,14 +184,14 @@ public class SerieRessource {
                 flag_errors = true;
             }
         }
-        
+
         if (flag_errors) {
             errors.add("errors", errorsList);
             JsonObject json_errors = errors.build();
             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors).build();
         }
-        
-        
+
+
         if(!jsonSerie.containsKey("pictures") || jsonSerie.isNull("pictures")){
             errorsList += "Il faut renseigner les images d'une série. ";
             flag_errors_pictures = true;
@@ -198,13 +202,13 @@ public class SerieRessource {
                 errorsList += "Il faut renseigner encore "+ (10-pictures.size())  +" images. ";
                 flag_errors_pictures = true;
             }else{
-                
+
                 for(int i = 0; i < pictures.size(); i++){
                     if(!pictures.getJsonObject(i).containsKey("img") || pictures.getJsonObject(i).isNull("img") || pictures.getJsonObject(i).getString("img").isEmpty()){
                         errorsList += "Il faut renseigner un lien d'image pour l'image: " + (i+1) +". ";
                         flag_errors_pictures = true;
                     }
-                    
+
                     if(!pictures.getJsonObject(i).containsKey("coords") || pictures.getJsonObject(i).isNull("coords")){
                         errorsList += "Il faut renseigner les coordonnées de l'image: "+ (i+1) +". ";
                         flag_errors_pictures = true;
@@ -218,7 +222,7 @@ public class SerieRessource {
                             errorsList += "Il faut respecter la casse de la lattitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
-                            
+
                         if(!serieCoordPictures.containsKey("lng") || serieCoordPictures.isNull("lng") || serieCoordPictures.getString("lng").isEmpty()){
                             errorsList += "Il faut renseigner la longitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
@@ -226,8 +230,8 @@ public class SerieRessource {
                             errorsList += "Il faut respecter la casse de la longitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
-                        
-                        if(flag_errors_pictures){                        
+
+                        if(flag_errors_pictures){
                             errors.add("errors", errorsList);
                             JsonObject json_errors_pictures = errors.build();
                             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
@@ -240,13 +244,13 @@ public class SerieRessource {
                 }
             }
         }
-        
-        if(flag_errors_pictures){                        
+
+        if(flag_errors_pictures){
             errors.add("errors", errorsList);
             JsonObject json_errors_pictures = errors.build();
             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
         }
-        
+
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
         
@@ -255,40 +259,40 @@ public class SerieRessource {
                 .build();
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
+
         return Response.created(uri).entity(succes).build();
-       
     }
-    
+
     private JsonObject buildJsonSerie(Serie s, List<Picture> pictures, String token){
-        
+
         JsonArrayBuilder picturesJA = Json.createArrayBuilder();
-        
+
         pictures.forEach((picture ->{
             JsonObject coords = Json.createObjectBuilder()
-                .add("lat", picture.getLat())
-                .add("lng", picture.getLng())
-                .build();
-            
+                    .add("lat", picture.getLat())
+                    .add("lng", picture.getLng())
+                    .build();
+
             JsonObject pic = Json.createObjectBuilder()
-                .add("lat", picture.getUrl())
-                .add("coords", coords)
-                .build();
-            
+                    .add("lat", picture.getUrl())
+                    .add("coords", coords)
+                    .build();
+
             picturesJA.add(pic);
         }));
-        
+
         JsonObject coords = Json.createObjectBuilder()
                 .add("lat", s.getLat())
                 .add("lng", s.getLng())
                 .build();
-        
+
         JsonObject difficulty = Json.createObjectBuilder()
                 .add("id", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getId())
                 .add("name", this.dm.findById(this.gm.findBySerieIdAndToken(s, token).getId_difficulty()).getLevel())
                 .add("token", token)
                 .build();
 
-        
+
         JsonObject serie = Json.createObjectBuilder()
                 .add("id", s.getId())
                 .add("name", s.getName())
@@ -298,19 +302,19 @@ public class SerieRessource {
                 .add("difficulty", difficulty)
                 .add("pictures", picturesJA)
                 .build();
-        
+
         return Json.createObjectBuilder()
                 .add("type", "ressource")
                 .add("serie", serie)
                 .build();
     }
-    
+
     private JsonObject buildJsonSeries(List<Serie> s){
         JsonArrayBuilder series = Json.createArrayBuilder();
-        
+
         s.forEach((serie)->{
             JsonArrayBuilder difficulties = Json.createArrayBuilder();
-            serie.getGame().forEach((g)->{ 
+            serie.getGame().forEach((g)->{
                 JsonObject difficulty = Json.createObjectBuilder()
                         .add("id", g.getId_difficulty())
                         .add("token", this.gm.findById(g.getId()).getToken())
@@ -318,7 +322,7 @@ public class SerieRessource {
                         .build();
                 difficulties.add(difficulty);
             });
-            
+
             JsonObject ser = Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
@@ -326,10 +330,10 @@ public class SerieRessource {
                     .add("description", serie.getDescription())
                     .add("difficulties", difficulties)
                     .build();
-            
+
             series.add(ser);
         });
-        
+
         return Json.createObjectBuilder()
                 .add("type", "collection")
                 .add("series", series)
