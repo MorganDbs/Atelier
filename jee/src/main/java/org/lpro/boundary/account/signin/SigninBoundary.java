@@ -63,8 +63,6 @@ public class SigninBoundary {
 
                 String token = this.issueToken(mail);
 
-                System.out.println("=========================> " + token);
-
                 this.am.signin(one, token);
 
                 return Response.ok(Json.createObjectBuilder()
