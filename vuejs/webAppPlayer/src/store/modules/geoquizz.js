@@ -33,8 +33,8 @@ export default {
 		setDifficulties: (state, difficulties) => {
 			state.difficulties = difficulties
 		},
-		setScore: (state, data) => {
-
+		setScore: (state, score) => {
+			state.game.score = score
 		}
 	},
 	getters: {

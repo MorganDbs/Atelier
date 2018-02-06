@@ -6,7 +6,7 @@
 				<v-popup red="popup" :popupopen="true">
 					<h4>GeoQuizz</h4>
 					<p>Un jeu amusant où tu dois positionner une photo sur la carte de ta ville sans te tromper et plus vite que les autres !</p>
-					<router-link :to="{name: 'game_index'}" class="btn btn-success">Jouer</router-link>
+					<router-link :to="{name: 'game_index'}" class="btn btn-success btn-block">Jouer</router-link>
 				</v-popup>
 			</v-marker>
 		</v-map>
@@ -81,5 +81,8 @@
 	}
 	.leaflet-container a {
 		color: #fff;
+	}
+	.leaflet-control-container {
+		display: none;
 	}
 </style>

@@ -44,7 +44,6 @@
 				</b-row>
 			</b-col>
 		</b-row>
-		<b-button variant="primary" class="mt-4 btn-block" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
 	</b-container>
 </template>
 
@@ -55,23 +54,14 @@
 		data: () => {
 			return {
 				difficulty: null,
-				nickname: null,
-				serie: {
-					id: "a",
-					name: "Test"
-				},
-				difficulties: [
-					{ id: "A", name: 'a' },
-					{ id: "B", name: 'b' },
-					{ id: "C", name: 'c' },
-				]
+				nickname: null
 			}
 		},
 		computed: {
 			...mapGetters(
                 {
                     series: 'geoquizz/getSeries',
-                    // difficulties: 'geoquizz/getDifficulties'
+                    difficulties: 'geoquizz/getDifficulties'
                 }
             )
 		},

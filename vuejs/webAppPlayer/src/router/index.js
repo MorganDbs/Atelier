@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-import GameIndex from '@/components/Game/GameIndex'
+import GameIndex from '@/components/Game/Index'
 
 Vue.use(Router)
 
