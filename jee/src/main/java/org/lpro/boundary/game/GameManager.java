@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.lpro.boundary.difficulty;
+package org.lpro.boundary.game;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +15,8 @@ import javax.persistence.CacheStoreMode;
 import org.lpro.entity.Difficulty;
 import org.lpro.entity.Game;
 import org.lpro.entity.Serie;
+import javax.persistence.TypedQuery;
+import org.lpro.boundary.difficulty.DifficultyManager;
 import token.Token;
 
 /**
@@ -33,6 +35,21 @@ public class GameManager {
         Query q = this.em.createNamedQuery("Game.findAll", Game.class);
         q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
         return q.getResultList();
+    }
+    
+    public Game findById(String id){
+        return this.em.find(Game.class, id);
+    }
+    
+    public List<Game> findBySerieId(Serie s) {
+        String query = "SELECT g FROM Game g WHERE g.id_serie = '" + s.getId() + "'";
+        Query q = this.em.createQuery(query);
+        return q.getResultList();
+    }
+    
+    public Game findBySerieIdAndToken(Serie s, String token) {
+        TypedQuery<Game> query = em.createQuery("SELECT g FROM Game g WHERE g.id_serie = '" + s.getId() + "' and token = '"+token+"'", Game.class);
+        return query.getSingleResult();
     }
     
     public void addGames(Serie s){

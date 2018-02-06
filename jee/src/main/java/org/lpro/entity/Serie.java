@@ -3,6 +3,7 @@ package org.lpro.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +35,9 @@ public class Serie implements Serializable {
     
     @ManyToMany
     private Set<Picture> picture = new HashSet<Picture>();
+    
+    @OneToMany
+    private Set<Game> game = new HashSet<Game>();
 
     public Serie() { }
 
@@ -99,5 +103,13 @@ public class Serie implements Serializable {
 
     public void setPicture(Set<Picture> picture) {
         this.picture = picture;
+    }
+
+    public Set<Game> getGame() {
+        return game;
+    }
+
+    public void setGame(Set<Game> game) {
+        this.game = game;
     }
 }

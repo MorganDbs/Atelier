@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import org.lpro.entity.Difficulty;
 import javax.persistence.Query;
 import javax.persistence.CacheStoreMode;
+import org.lpro.entity.Game;
 
 /**
  *
@@ -19,6 +20,10 @@ import javax.persistence.CacheStoreMode;
 public class DifficultyManager {
     @PersistenceContext
     EntityManager em;
+    
+    public Difficulty findById(String id){
+        return this.em.find(Difficulty.class, id);
+    }
     
     public List<Difficulty> findAll() {
         Query q = this.em.createNamedQuery("Difficulty.findAll", Difficulty.class);
