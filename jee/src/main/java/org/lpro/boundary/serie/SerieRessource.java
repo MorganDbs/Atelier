@@ -65,7 +65,7 @@ public class SerieRessource {
         @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSeries() {
         List<Serie> s = this.sm.findAll();
-        return Response.status(Response.Status.EXPECTATION_FAILED).entity(buildJsonSeries(s)).build();
+        return Response.status(Response.Status.OK).entity(buildJsonSeries(s)).build();
     }
     
     @GET
@@ -75,13 +75,11 @@ public class SerieRessource {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 500, message = "Internal server error")})
-    public Response getSerie(@PathParam("id") String id, @QueryParam("token") String token, @HeaderParam("X-lbs-token") String header, @Context UriInfo uriInfo) {
-        Serie s;
+    public Response getSerie(@PathParam("id") String id, @QueryParam("token") String token, @HeaderParam("X-geoguizz-token") String header, @Context UriInfo uriInfo) {
+        Serie s = this.sm.findById(id);
         Boolean flag;
         
-        try{
-          s = this.sm.findById(id);
-        }catch(NullPointerException e){
+        if(s == null){
             return Response.status(Response.Status.NOT_FOUND).entity(
                     Json.createObjectBuilder()
                             .add("error", "La série n'existe pas")
@@ -251,9 +249,13 @@ public class SerieRessource {
         
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
+        
+        JsonObject succes = Json.createObjectBuilder()
+                .add("succes", "La série a été crée")
+                .build();
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
-        return Response.created(uri).build();
+        return Response.created(uri).entity(succes).build();
        
     }
     
