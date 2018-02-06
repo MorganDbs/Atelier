@@ -52,17 +52,19 @@ public class GameManager {
         return query.getSingleResult();
     }
     
-    public void addGames(Serie s){
-        List<Difficulty> d = this.dm.findAll();
-        
-        d.forEach(df ->{
-           this.save(new Game(s.getId(), df.getId())); 
-        });
+    public Game findByToken(String token) {
+        TypedQuery<Game> query = em.createQuery("SELECT g FROM Game g WHERE token = '"+token+"'", Game.class);
+        return query.getSingleResult();
     }
     
-    public void save(Game g){
+    public Game create(Game g){
         g.setId(UUID.randomUUID().toString());
         g.setToken(new Token().generateRandomString());
-        this.em.merge(g);
+        return this.em.merge(g);
+    }
+    
+    public Game updateScore(Game g, int score){
+        g.setScore(score);
+        return this.em.merge(g);
     }
 }
