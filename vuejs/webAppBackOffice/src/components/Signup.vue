@@ -59,19 +59,15 @@
         if (this.members.password === this.confirmPassword) {
           confApi.post('/signup', this.members).then((response) => {
             alert('Vous etes inscrit !')
+            console.log(response.data)
             sessionStorage.setItem("isConnected", "Connect")
-            sessionStorage.setItem("token", response.data.token)
-            sessionStorage.setItem("id", response.data._id)
+            sessionStorage.setItem("token", response.data.tokenCo)
+            sessionStorage.setItem("id", response.data.id)
             router.push("PageCo")
-              .catch((error) => {
-                if (error.response.status === 422) {
-                  alert("Votre email est déjà utilisé.");
-                }
-              })
           }).catch((error) => {
-            if (error.response.status === 422) {
-              alert("Votre email est déjà utilisé.");
-            }
+
+              alert(error.response.data);
+
           })
 
         } else {

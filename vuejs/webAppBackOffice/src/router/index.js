@@ -3,25 +3,29 @@ import Router from 'vue-router'
 import Signin from '@/components/Signin'
 import Signup from '@/components/Signup'
 import Home from '@/components/Home'
-
+import PageCo from '@/components/PageCo'
 Vue.use(Router)
 
 const router =  new Router({
   routes: [
     {
       path: '/signin',
-      name: 'Signin',
+      name: 'signin',
       component: Signin
     },
     {
       path: '/signup',
-      name: 'Signup',
+      name: 'signup',
       component: Signup
     },
-
+    {
+      path: '/pageCo',
+      name: 'pageCo',
+      component: PageCo
+    },
     {
       path: '/',
-      name: 'Home',
+      name: 'home',
       component: Home
     }
 

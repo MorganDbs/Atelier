@@ -13,8 +13,8 @@
 
     </div>
 
-    <div id="app" style="height: 100%">
-      <v-map :zoom=13 :center="[47.413220, -1.219482]">
+    <div id="app">
+      <v-map id="map" :zoom=13 :center="[47.413220, -1.219482]">
         <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
         <v-marker :lat-lng="[47.413220, -1.219482]"></v-marker>
       </v-map>
@@ -76,6 +76,10 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  #map{
+    width: 70vw;
+    height: 70vh;
+  }
   h1, h2 {
     font-weight: normal;
   }

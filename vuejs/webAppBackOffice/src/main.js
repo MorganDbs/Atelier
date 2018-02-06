@@ -15,7 +15,7 @@ Vue.component('v-marker', Vue2Leaflet.Marker);
 Vue.use(BootstrapVue);
 
 require('../node_modules/bootstrap/dist/css/bootstrap.css')
-
+require('../node_modules/leaflet/dist/leaflet.css')
 
 
 Vue.config.productionTip = false
