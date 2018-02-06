@@ -33,7 +33,7 @@ public class SignupBoundary {
     @Consumes("application/json")
     @ApiOperation(value = "Crée un compte pour un utilisateur", notes = "Crée un compte pour un utilisateur à partir du JSON fourni")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 500, message = "Internal server error")})
@@ -52,7 +52,7 @@ public class SignupBoundary {
                             user = this.am.signup(fullname, mail, password);
 
                             if (user != null) {
-                                return Response.ok(Json.createObjectBuilder()
+                                return Response.status(Response.Status.CREATED).entity(Json.createObjectBuilder()
                                         .add("id_user", user.getId())
                                         .add("fullname", user.getFullname())
                                         .add("mail", user.getMail())

@@ -18,11 +18,13 @@ public class JAXRSConfiguration extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(org.lpro.provider.cors.CORSRequestFilter.class);
+        classes.add(org.lpro.provider.cors.CORSResponseFilter.class);
         classes.add(com.github.phillipkruger.apiee.ApieeService.class);
         classes.add(org.lpro.boundary.account.signup.SignupBoundary.class);
         classes.add(org.lpro.boundary.account.signin.SigninBoundary.class);
-        classes.add(org.lpro.boundary.account.signout.SignoutBoundary.class);
         classes.add(org.lpro.boundary.serie.SerieRessource.class);
+        classes.add(org.lpro.boundary.game.GameRessource.class);
 
         return classes;
     }

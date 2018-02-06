@@ -301,7 +301,8 @@ public class SerieRessource {
                 .build();
     }
 
-        private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
+
+    private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
 
         s.forEach((serie)->{

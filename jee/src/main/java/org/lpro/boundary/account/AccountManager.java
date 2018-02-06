@@ -54,16 +54,4 @@ public class AccountManager {
 
         return this.em.merge(newUser);
     }
-
-    public Account signin(Account user, String token) {
-        user.setToken(token);
-
-        return this.em.merge(user);
-    }
-
-    public Account signout(Account user) {
-        user.setToken(null);
-
-        return this.em.merge(user);
-    }
 }

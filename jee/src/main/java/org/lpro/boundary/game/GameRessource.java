@@ -54,10 +54,10 @@ public class GameRessource {
     @ApiOperation(value = "Crée une game", notes = "Crée une game à partir du JSON fourni")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
-        @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 417, message = "EXPECTATION_FAILED"),
         @ApiResponse(code = 500, message = "Internal server error")})
     public Response addScore(JsonObject jsonScore, @Context UriInfo uriInfo) throws java.text.ParseException {
+        System.out.println("qsbdhklqsmbdjlkqsljqdskldsqlmk");
         JsonObjectBuilder errors = Json.createObjectBuilder();
         String errorsList = "";
         boolean flag = false;
