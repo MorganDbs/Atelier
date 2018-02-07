@@ -14,7 +14,8 @@
       </div>
       <hr/>
 
-    </div><div class="bloc">
+    </div>
+    <div class="bloc">
     <h1>GeoQuizz Sign up</h1>
     <form @submit.prevent="signup()">
       <label for="fname">Nom et prénom</label>
@@ -42,7 +43,7 @@
   import router from '../router'
 
   export default {
-    name: 'Signin',
+    name: 'signup',
     data () {
       return {
         members:{fullname:'',
@@ -58,12 +59,8 @@
       signup() {
         if (this.members.password === this.confirmPassword) {
           confApi.post('/signup', this.members).then((response) => {
-            alert('Vous etes inscrit !')
-            console.log(response.data)
-            sessionStorage.setItem("isConnected", "Connect")
-            sessionStorage.setItem("token", response.data.tokenCo)
-            sessionStorage.setItem("id", response.data.id)
-            router.push("PageCo")
+            alert('Vous etes inscrit ! Veuillez vous connecter.')
+            router.push("signin")
           }).catch((error) => {
 
               alert(error.response.data);

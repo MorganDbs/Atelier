@@ -19,7 +19,7 @@
     <h1>GeoQuizz Sign in</h1>
       <form @submit.prevent="signin()">
       <label for="email">Email</label>
-      <input type="email" v-model="members.email" id="email" name="email" placeholder="Votre email .." required>
+      <input type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
 
       <label for="password">Password</label>
       <input type="password" v-model="members.password" id="password" name="password" placeholder="Votre mot de passe.." required>
@@ -31,28 +31,30 @@
 </template>
 
 <script>
-  //import configApi from '../configApi'
+  import configApi from '../configApi'
   import router from '../router'
 export default {
-  name: 'Signin',
+  name: 'signin',
   data () {
     return {
-      members:{email: '',
+      members:{mail: '',
         password:''
       }
 
     }
   },
   methods: {
-    /*signin(){
-      configApi.post('/members/signin', this.members).then((response)=> {
+    signin(){
+      console.log(this.members)
+      configApi.post('/signin', this.members).then((response)=> {
+
         sessionStorage.setItem("isConnected", "Connect")
         sessionStorage.setItem("token", response.data.token)
-        sessionStorage.setItem("id", response.data._id)
+        sessionStorage.setItem("id", response.data.id_users)
         router.push("PageCo")
       })
     }
-    */
+
   }
 }
 </script>

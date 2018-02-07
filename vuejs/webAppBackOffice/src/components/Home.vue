@@ -32,13 +32,13 @@
   import router from '../router'
 
   export default {
-    name: 'Home',
+    name: 'home',
     methods: {
       signin(){
-        router.push('Signin')
+        router.push('signin')
       },
       signup(){
-        router.push('Signup')
+        router.push('signup')
       },
     }
   }

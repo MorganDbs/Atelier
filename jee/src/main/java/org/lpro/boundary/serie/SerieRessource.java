@@ -315,22 +315,11 @@ public class SerieRessource {
         JsonArrayBuilder series = Json.createArrayBuilder();
 
         s.forEach((serie)->{
-            /*JsonArrayBuilder difficulties = Json.createArrayBuilder();
-            serie.getGame().forEach((g)->{
-                JsonObject difficulty = Json.createObjectBuilder()
-                        .add("id", g.getId_difficulty())
-                        .add("token", this.gm.findById(g.getId()).getToken())
-                        .add("name", this.dm.findById(this.gm.findById(g.getId()).getId_difficulty()).getLevel())
-                        .build();
-                difficulties.add(difficulty);
-            });*/
-
             JsonObject ser = Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
-                    //.add("difficulties", difficulties)
                     .build();
 
             series.add(ser);
@@ -339,9 +328,30 @@ public class SerieRessource {
         JsonArrayBuilder difficulties = Json.createArrayBuilder();
 
         d.forEach((difficulty) -> {
+            JsonArrayBuilder jsonDistances = Json.createArrayBuilder();
+            JsonArrayBuilder jsonMultipliers = Json.createArrayBuilder();
+
+            difficulty.getDistance().forEach((distance -> {
+                jsonDistances.add(Json.createObjectBuilder()
+                        .add("id_distance", distance.getId())
+                        .add("distance", distance.getDistance())
+                        .add("points", distance.getPoints())
+                        .build());
+            }));
+
+            difficulty.getMultiplier().forEach((multiplier -> {
+                jsonMultipliers.add(Json.createObjectBuilder()
+                        .add("id_multiplier", multiplier.getId())
+                        .add("multiplier", multiplier.getMultiplier())
+                        .add("time", multiplier.getTime())
+                        .build());
+            }));
+
             JsonObject json = Json.createObjectBuilder()
                     .add("id", difficulty.getId())
                     .add("name", difficulty.getLevel())
+                    .add("distances", jsonDistances.build())
+                    .add("multipliers", jsonMultipliers.build())
                     .build();
 
             difficulties.add(json);
