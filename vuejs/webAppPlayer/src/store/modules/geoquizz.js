@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import api from '@/services/api'
+import router from '@/router'
 
 export default {
 	namespaced: true,
@@ -51,15 +52,20 @@ export default {
 			return state.difficulties
 		},
 		getDifficulty: (state) => {
-			return state.difficulty
+			return state.game.difficulty
 		},
 		getScore: (state) => {
-			return state.score
+			return state.game.score
 		}
 	},
 	actions: {
 		sendGameInfo: ({commit}, data) => {
-			api.post('/serie', {
+			commit('setNickname', data.nickname)
+			commit('setDifficulty', data.difficulty)
+			
+			router.push({ name: 'game_board' })
+
+			/*api.post('/series', {
 				id_serie: data.serie.id,
 				id_difficulty: data.difficulty.id,
 				nickname: data.nickname
@@ -67,12 +73,13 @@ export default {
 			.then((response) => {
 				commit('setNickname', data.nickname)
 				commit('setDifficulty', data.difficulty)
-				commit('setSerie', response.serie)
-				commit('setToken', response.token)
+				commit('setSerie', response.data.serie)
+				commit('setToken', response.data.token)
+				router.push({ name: 'game_board' })
 			})
 			.catch((error) => {
 				console.log(error)
-			})
+			})*/
 		},
 		setScore: ({commit}, data) => {
 			commit('setScore', data)
@@ -80,8 +87,8 @@ export default {
 		getGeoQuizz: ({commit}) => {
 			api.get('/series')
 			.then((response) => {
-				commit('setSeries', response.series)
-				commit('setDifficulties', response.difficulties)
+				commit('setSeries', response.data.series)
+				commit('setDifficulties', response.data.difficulties)
 			})
 			.catch((error) => {
 				console.log(error)

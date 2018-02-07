@@ -36,7 +36,7 @@
 								<p class="card-text">
 									<h5>{{ serie.name }}</h5>
 									Ville : {{ serie.city }}<br />{{ serie.description }}
-									<b-button variant="primary" class="mt-4 btn-block" @click="play({serie, difficulty, nickname})">Jouer</b-button>
+									<b-button variant="primary" class="mt-4 btn-block" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
 								</p>
 							</b-card>
 						</b-card-group>
@@ -49,6 +49,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
+	import store from '@/store'
 
 	export default {
 		data: () => {
@@ -56,6 +57,9 @@
 				difficulty: null,
 				nickname: null
 			}
+		},
+		created() {
+			store.dispatch('geoquizz/getGeoQuizz')
 		},
 		computed: {
 			...mapGetters(
