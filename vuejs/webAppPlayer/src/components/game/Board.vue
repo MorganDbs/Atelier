@@ -1,6 +1,6 @@
 <template>
 	<div class="wrapper">
-		<v-map id="map" ref="map" :zoom="13" :min-zoom="13" :max-zoom="13"  :center="serie.coords" v-on:l-click="addMarker">
+		<v-map id="map" ref="map" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom"  :center="serie.coords" v-on:l-click="addMarker">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-if="marker" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="pinIcon">
 			</v-marker>
