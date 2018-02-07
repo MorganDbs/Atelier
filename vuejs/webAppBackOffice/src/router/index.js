@@ -4,6 +4,8 @@ import signin from '@/components/Signin'
 import signup from '@/components/Signup'
 import home from '@/components/Home'
 import pageCo from '@/components/PageCo'
+import map from '@/components/map'
+
 Vue.use(Router)
 
 const router =  new Router({
@@ -19,10 +21,16 @@ const router =  new Router({
       component: signup
     },
     {
+      path: '/map',
+      name: 'map',
+      component: map
+    },
+    {
       path: '/pageCo',
       name: 'pageCo',
       component: pageCo
     },
+
     {
       path: '/',
       name: 'home',
@@ -34,13 +42,13 @@ const router =  new Router({
 
 // Les middlewares
 router.beforeEach((to, from, next) => {
-  console.log('1')
+
   if (to.name == 'pageCo' && sessionStorage.getItem("isConnected") != "Connect") {
-    console.log('2')
+
     next({name: 'signin' })
   }
   else if (to.name == 'signin' && sessionStorage.getItem("isConnected") == "Connect" ){
-    console.log('3')
+
     next({name: 'PageCo' })
   }
   else{

@@ -4,7 +4,7 @@
       <div class="jumbotron">
 
         <div classe="img">
-          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="GeoQuizz">
         </div>
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
@@ -52,6 +52,10 @@ export default {
         sessionStorage.setItem("token", response.data.token)
         sessionStorage.setItem("id", response.data.id_users)
         router.push("PageCo")
+      }).catch((error) => {
+
+        alert(error.response.data);
+
       })
     }
 

@@ -4,7 +4,7 @@
       <div class="jumbotron">
 
         <div classe="img">
-          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="GeoQuizz">
         </div>
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>

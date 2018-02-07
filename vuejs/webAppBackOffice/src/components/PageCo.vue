@@ -12,8 +12,7 @@
           <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
           <p class="lead">C'est partie !</p>
         </div>
-      </div>
-      <hr/>
+      </div><hr/>
 
     </div>
 
@@ -24,6 +23,9 @@
   </div>
 
     <div id="app">
+
+      <div class="formulaire">
+        <h1>Créer une serie</h1>
       <form @submit.prevent="createSerie()">
         <label for="name">Nom de la série</label>
         <input type="text" v-model="serie.name" id="name" name="name" placeholder="Le nom de la serie " required>
@@ -34,19 +36,10 @@
         <label for="city">Ville</label>
         <input type="text" v-model="serie.city" id="city" name="city" placeholder="Votre ville" required>
 
-        <label>Latitude de la coordonnées</label>
-        </br>
-        <input  type="number" step="any" v-model="serie.coords.lat" id="coordsLat" name="coords" placeholder="Latitude" required>
-        <input type="number" step="any" v-model="serie.coords.lng" id="coordsLng" name="coords" placeholder="Longitude" required>
-
 
         <input type="submit" value="Submit">
       </form>
-
-      <v-map id="map" :zoom=13 :center="[47.413220, -1.219482]">
-        <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-        <v-marker :lat-lng="[47.413220, -1.219482]"></v-marker>
-      </v-map>
+      </div>
     </div>
 
 
@@ -55,11 +48,13 @@
 </template>
 
 <script>
-  //import configApi from '../configApi'
+  import axios from 'axios'
   import router from '../router'
   export default {
 
     name: 'pageCo',
+
+
     data (){
       return {
         serie: {
@@ -71,6 +66,10 @@
             lng: ''
           },
           pictures: []
+        },
+        cityCoord:{
+          lat:'',
+          lng:''
         }
       }
 
@@ -80,12 +79,23 @@
       logOut(){
         sessionStorage.clear()
         alert("You're disconnect");
-        router.push({name: 'Home'})
+        router.push({name: 'home'})
 
 
       },
       createSerie(){
-        
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+this.serie.city+`,+FR&key=AIzaSyCdIprtWN6lsubVYIiWCkQUGNEoLj_AxDo`)
+          .then(response => {
+            // JSON responses are automatically parsed.
+            console.log(response.data.results[0].geometry.location)
+            this.cityCoord.lat=response.data.results[0].geometry.location.lat;
+            this.cityCoord.lng=response.data.results[0].geometry.location.lng;
+            router.push({name:'map'})
+          })
+          .catch(e => {
+            alert(e)
+          })
+
       }
     }
   }
@@ -94,7 +104,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   #map{
-    width: 70vw;
+    width: 55vw;
     height: 70vh;
   }
   h1, h2 {
@@ -107,27 +117,6 @@
   li {
     display: inline-block;
     margin: 0 10px;
-  }
-  a {
-    color: #42b983;
-  }
-  input[type=text], input[type=email], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  input[type=number], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
   }
 
   input[type=submit] {
@@ -156,7 +145,7 @@
 
   button {
     margin-left: 2px;
-    background-color: #4CAF50; /* Green */
+    background-color: #ADD8E6; /* blue */
     border: none;
     color: white;
     padding: 15px 32px;
@@ -208,12 +197,17 @@
     display: flex;
     flex-direction: column;
   }
-  #coordsLat{
-    width: 45vw
+
+  #app{
+    display: flex;
+    flex-direction: row;
   }
-  #coordsLng{
-    width: 45vw
+  .formulaire{
+    width: 40vw;
+    margin-top:2%;
   }
+
+
 
 
 </style>
