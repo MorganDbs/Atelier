@@ -26,8 +26,10 @@ public class DifficultyManager {
     }
     
     public List<Difficulty> findAll() {
-        Query q = this.em.createNamedQuery("Difficulty.findAll", Difficulty.class);
-        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        String query = "SELECT d FROM Difficulty d ORDER BY d.id ASC";
+        Query q = this.em.createQuery(query);
         return q.getResultList();
     }
+    
+    
 }
