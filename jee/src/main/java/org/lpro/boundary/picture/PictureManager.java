@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.lpro.entity.Picture;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.lpro.entity.Serie;
 
 /**
  *
