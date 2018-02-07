@@ -159,7 +159,7 @@ public class GameRessource {
                             .add("error", "Il faut rentrer un score")
                             .build()
             ).build();
-        }else if(!Pattern.matches("^\\d$", jsonScore.getString("score"))){
+        }else if(!Pattern.matches("^\\d+$", jsonScore.getString("score"))){
             return Response.status(Response.Status.EXPECTATION_FAILED).entity(
                     Json.createObjectBuilder()
                             .add("error", "Il faut respecter la casse du score")
