@@ -60,20 +60,19 @@ export default {
 	},
 	actions: {
 		sendGameInfo: ({commit}, data) => {
-			commit('setNickname', data.nickname)
-			data.difficulty.distances.reverse()
+			/*commit('setNickname', data.nickname)
 			commit('setDifficulty', data.difficulty)
 			
-			router.push({ name: 'game_board' })
+			router.push({ name: 'game_board' })*/
 			
-			/*api.post('/games', {
+			api.post('/games', {
 				id_serie: data.serie.id,
 				id_difficulty: data.difficulty.id,
 				nickname: data.nickname
 			})
 			.then((response) => {
+				console.log(response)
 				commit('setNickname', data.nickname)
-				data.difficulty.distances.reverse()
 				commit('setDifficulty', data.difficulty)
 				commit('setSerie', response.data.serie)
 				commit('setToken', response.data.token)
@@ -81,7 +80,7 @@ export default {
 			})
 			.catch((error) => {
 				console.log(error)
-			})*/
+			})
 		},
 		setScore: ({commit}, data) => {
 			commit('setScore', data)
@@ -89,6 +88,7 @@ export default {
 		getGeoQuizz: ({commit}) => {
 			api.get('/series')
 			.then((response) => {
+				console.log(response)
 				commit('setSeries', response.data.series)
 				commit('setDifficulties', response.data.difficulties)
 			})
