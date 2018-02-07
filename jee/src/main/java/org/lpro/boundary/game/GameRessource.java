@@ -67,9 +67,6 @@ public class GameRessource {
         if(!jsonScore.containsKey("id_serie") || jsonScore.isNull("id_serie") || jsonScore.getString("id_serie").isEmpty()){
             errorsList += "Il faut renseigner un id de série. ";
             flag = true;
-        }else if(!Pattern.matches("^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$", jsonScore.getString("id_serie"))){
-            errorsList += "Il faut respecter la casse de l'id de série. ";
-            flag = true;
         }
         
         Serie s = this.sm.findById(jsonScore.getString("id_serie"));
@@ -86,16 +83,10 @@ public class GameRessource {
         if(!jsonScore.containsKey("nickname") || jsonScore.isNull("nickname") || jsonScore.getString("nickname").isEmpty()){
             errorsList += "Il faut renseigner un nickname. ";
             flag = true;
-        }else if(!Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonScore.getString("nickname"))){
-            errorsList += "Il faut respecter la casse du nickname. ";
-            flag = true;
         }
         
         if(!jsonScore.containsKey("id_difficulty") || jsonScore.isNull("id_difficulty") || jsonScore.getString("id_difficulty").isEmpty()){
             errorsList += "Il faut renseigner un id de difficulte. ";
-            flag = true;
-        }else if(!Pattern.matches("^\\d$", jsonScore.getString("id_difficulty"))){
-            errorsList += "Il faut respecter la casse de l'id de difficulty. ";
             flag = true;
         }
         
