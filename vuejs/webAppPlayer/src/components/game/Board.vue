@@ -13,7 +13,7 @@
 <script>
 	import Vue2Leaflet from 'vue2-leaflet'
 	import store from '@/store'
-	import { mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 	var pinIcon = L.icon({
 		iconUrl: 'static/images/pin.png',
@@ -87,13 +87,16 @@
 				let picture = this.serie.pictures[0]
 				let distance = (e.latlng.distanceTo(picture.coords) / 1000).toFixed(2) // convert meter to kilometer
 				console.log(`${distance} km`)
-				// TODO : calcul des points selon la distance
 				// TODO : ajouter un timer et calculer les points selon le temps de réponse
 				// TODO : afficher le score et le timer sur l'interface
 				// TODO : afficher l'image sur l'interface
 				// TODO : Ajouter le zoom dans le retour de l'API sur les difficultés
 				// TODO : Afficher un message pour dire a quelle distance on le lieu a été place par rapport a lieu original
 				// TODO : Bouton suivant pour passer à l'image suivant ?
+				let a = this.difficulty.distances.find((e) => {
+					return distance < e.distance
+				})
+				console.log("---> " + a.points)
 			}
 		}
 	}
