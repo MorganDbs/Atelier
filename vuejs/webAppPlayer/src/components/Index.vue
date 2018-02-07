@@ -2,11 +2,11 @@
 	<div class="wrapper">
 		<v-map id="map" ref="map" :zoom="map.zoom" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" :center="map.position">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-			<v-marker v-on:l-add="bindPopup" :key="marker.id" :lat-lng="marker.position" :visible="marker.visible" :draggable="marker.draggable" :icon="marker.icon">
+			<v-marker v-on:l-add="bindPopup" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="icon">
 				<v-popup red="popup" :popupopen="true">
 					<h4>GeoQuizz</h4>
 					<p>Un jeu amusant où tu dois positionner une photo sur la carte de ta ville sans te tromper et plus vite que les autres !</p>
-					<router-link :to="{name: 'game_index'}" class="btn btn-success">Jouer</router-link>
+					<router-link :to="{name: 'game_index'}" class="btn btn-success btn-block">Jouer</router-link>
 				</v-popup>
 			</v-marker>
 		</v-map>
@@ -28,12 +28,13 @@
 		name: 'HelloWorld',
 		data() {
 			return {
+				icon: markerIcon,
 				map: {
 					minZoom: 13,
 					maxZoom: 13,
 					zoom: 13,
 					position : {
-						lat: 48.6906765, 
+						lat: 48.6884439, 
 						lng: 6.1764079
 					}
 				},
@@ -41,10 +42,7 @@
 					position : {
 						lat: 48.6906765, 
 						lng: 6.1764079
-					},
-					draggable: true,
-					visible: true,
-					icon: markerIcon
+					}
 				},
 				markers: []
 			}
@@ -60,9 +58,6 @@
       		this.markers.push(this.marker)
 		},
 		methods: {
-			alert(item) {
-				alert('this is ' + JSON.stringify(item));
-			},
 			bindPopup(marker) {
 				marker.target.togglePopup()
 			}
@@ -81,5 +76,8 @@
 	}
 	.leaflet-container a {
 		color: #fff;
+	}
+	.leaflet-control-container, .leaflet-popup-close-button {
+		display: none;
 	}
 </style>
