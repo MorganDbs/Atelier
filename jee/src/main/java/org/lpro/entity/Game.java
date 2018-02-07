@@ -24,16 +24,18 @@ public class Game implements Serializable{
     private String id;
 
     @NotNull
-    private String id_serie, id_difficulty;
+    private String id_serie, id_difficulty, nickname;
     
+    private int score;
     private String token;
 
     public Game() {
     }
 
-    public Game(String id_serie, String id_difficulty) {
+    public Game(String id_serie, String id_difficulty, String nickname) {
         this.id_serie = id_serie;
         this.id_difficulty = id_difficulty;
+        this.nickname = nickname;
     }
 
     public String getId() {
@@ -58,6 +60,22 @@ public class Game implements Serializable{
 
     public void setId_difficulty(String id_difficulty) {
         this.id_difficulty = id_difficulty;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public String getToken() {

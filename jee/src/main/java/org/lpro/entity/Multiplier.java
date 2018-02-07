@@ -24,7 +24,7 @@ public class Multiplier implements Serializable{
 
     private int time;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "multiplier")
     private Set<Difficulty> difficulty = new HashSet<Difficulty>();
 
     public Multiplier() { }

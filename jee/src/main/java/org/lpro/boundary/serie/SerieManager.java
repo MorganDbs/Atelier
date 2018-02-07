@@ -46,8 +46,6 @@ public class SerieManager {
     public Serie saveNewSeries(Serie s, Set<Picture> p){
         s.setId(UUID.randomUUID().toString());
         s.setPicture(p);
-        this.gm.addGames(s);
-        s.setGame(new HashSet<Game>(this.gm.findBySerieId(s)));
         return this.em.merge(s);
     }
     

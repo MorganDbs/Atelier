@@ -31,10 +31,10 @@ public class Difficulty implements Serializable{
 
     private int zoom;
 
-    @ManyToMany(mappedBy = "difficulty")
+    @ManyToMany
     private Set<Distance> distance = new HashSet<Distance>();
 
-    @ManyToMany(mappedBy = "difficulty")
+    @ManyToMany
     private Set<Multiplier> multiplier = new HashSet<Multiplier>();
 
     public Difficulty() {
