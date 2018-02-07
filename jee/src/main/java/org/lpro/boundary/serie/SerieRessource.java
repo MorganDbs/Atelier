@@ -269,6 +269,7 @@ public class SerieRessource {
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
+                    .add("picture", serie.getPicture().iterator().next().getUrl())
                     .build();
 
             series.add(ser);
@@ -299,6 +300,7 @@ public class SerieRessource {
             JsonObject json = Json.createObjectBuilder()
                     .add("id", difficulty.getId())
                     .add("name", difficulty.getLevel())
+                    .add("zoom", difficulty.getZoom())
                     .add("distances", jsonDistances.build())
                     .add("multipliers", jsonMultipliers.build())
                     .build();
