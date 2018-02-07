@@ -24,7 +24,7 @@ public class Distance implements Serializable{
 
     private int points;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "distance")
     private Set<Difficulty> difficulty = new HashSet<Difficulty>();
 
     public Distance() { }
