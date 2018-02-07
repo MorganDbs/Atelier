@@ -23,12 +23,10 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,6 +35,7 @@ import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
 import org.lpro.entity.Difficulty;
+import org.lpro.entity.Game;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
@@ -70,6 +69,28 @@ public class SerieRessource {
         List<Serie> s = this.sm.findAll();
         List<Difficulty> d = this.dm.findAll();
         return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d)).build();
+    }
+    
+    @GET
+    @Path("{id}/games")
+    @ApiOperation(value = "Récupère toutes les games d'une série", notes = "Renvoie le JSON associé à la collection de games d'une série")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getGamesSerie(@PathParam("id") String id, @Context UriInfo uriInfo) {
+        Serie s = this.sm.findById(id);
+        
+        if(s == null){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Pas de série pour cette id")
+                            .build()
+            ).build();
+        }
+        
+        List<Game> games = this.gm.findBySerieIdAndOrderByScore(s);
+        return Response.status(Response.Status.OK).entity(buildJsonGames(s, games)).build();
     }
 
     @POST
@@ -219,7 +240,26 @@ public class SerieRessource {
 
         return Response.created(uri).entity(succes).build();
     }
+    
+    private JsonObject buildJsonGames(Serie s, List<Game> g){
+        JsonArrayBuilder games = Json.createArrayBuilder();
 
+        g.forEach((game)->{
+            JsonObject gam = Json.createObjectBuilder()
+                    .add("id", game.getId())
+                    .add("difficulty", this.dm.findById(game.getId_difficulty()).getLevel())
+                    .add("nickname", game.getNickname())
+                    .add("score", game.getScore())
+                    .build();
+
+            games.add(gam);
+        });
+        
+        return Json.createObjectBuilder()
+                .add("type", "collection")
+                .add("games", games)
+                .build();
+    }
     private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
 
