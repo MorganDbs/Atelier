@@ -1,12 +1,17 @@
 <template>
 	<div class="wrapper">
-		<v-map id="map" ref="map" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom"  :center="serie.coords" v-on:l-click="addMarker">
+		<v-map id="map" ref="map" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom" :center="serie.coords" v-on:l-click="addMarker">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-if="marker" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="pinIcon">
 			</v-marker>
 			<v-marker v-if="serie" v-for="picture in serie.pictures" :key="picture.id" :lat-lng="picture.coords" :visible="true" :draggable="false" :icon="markerIcon">
 			</v-marker>
 		</v-map>
+		<div class="board">
+			<div class="timer">
+				
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -116,5 +121,13 @@
 	}
 	.leaflet-control-container {
 		display: none;
+	}
+	.board {
+		width: 200px;
+		height: 50px;
+		background-color: #red;
+		z-index: 99;
+		bottom: 0;
+		left: 50px;
 	}
 </style>
