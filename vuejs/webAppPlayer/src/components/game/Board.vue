@@ -7,7 +7,7 @@
 			<v-marker v-if="serie" v-for="picture in pictures" :key="picture.id" :lat-lng="picture.coords" :visible="true" :draggable="false" :icon="markerIcon">
 			</v-marker>
 		</v-map>
-
+		
 		<div class="board">
 			<div class="timer">
 				<vue-circle
@@ -17,8 +17,8 @@
         			line-cap="round"
         			:fill="timer.fill"
         			empty-fill="rgba(0, 0, 0, 0.3)"
-        			:animation="{ duration: 5000 }"
-        			:start-angle="80"
+        			:animation="{ duration: (difficulty.multipliers[multiplier].time * 1000) }"
+        			:start-angle="0"
         			insert-mode="append"
         			:thickness="5"
         			:show-percent="false"
@@ -67,7 +67,7 @@
 						color: '#FFC312'
 					}
 				},
-				multiplier: 0
+				multiplier: 1
 			}
 		},
 		components: {
@@ -106,7 +106,7 @@
 				console.log("---> " + a.points)
 			},
 		    timer_finished(event) {
-		   		console.log("Circle progress end");
+		   		console.log(Object.keys(this.difficulty.distances).length);
 		    }
 		}
 	}
