@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.lpro.entity;
 
 import javax.persistence.Entity;
@@ -14,7 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 
 @Entity
@@ -32,10 +27,10 @@ public class Difficulty implements Serializable{
     private int zoom;
 
     @ManyToMany
-    private Set<Distance> distance = new HashSet<Distance>();
+    private Set<Distance> distance = new TreeSet<Distance>();
 
     @ManyToMany
-    private Set<Multiplier> multiplier = new HashSet<Multiplier>();
+    private Set<Multiplier> multiplier = new TreeSet<Multiplier>();
 
     public Difficulty() {
     }

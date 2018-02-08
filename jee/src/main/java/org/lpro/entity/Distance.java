@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,7 +16,7 @@ import java.util.Set;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQuery(name="Distance.findAll",query="SELECT d FROM Distance d")
-public class Distance implements Serializable{
+public class Distance implements Serializable, Comparable<Distance> {
 
     @Id
     private String id;
@@ -59,5 +60,10 @@ public class Distance implements Serializable{
 
     public void setDifficulty(Set<Difficulty> difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public int compareTo(Distance distance)
+    {
+        return Integer.compare(this.getDistance(), distance.getDistance());
     }
 }
