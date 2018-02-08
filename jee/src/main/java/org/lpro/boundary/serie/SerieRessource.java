@@ -43,6 +43,7 @@ import org.lpro.entity.Game;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
+import token.Token;
 
 
 @Stateless
@@ -219,7 +220,9 @@ public class SerieRessource {
                             JsonObject json_errors_pictures = errors.build();
                             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
                         }else{
-                            Picture pic = new Picture(pictures.getJsonObject(i).getString("img"), Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
+                            String ext = pictures.getJsonObject(i).getString("img").substring(pictures.getJsonObject(i).getString("img").lastIndexOf("."), pictures.getJsonObject(i).getString("img").length());
+                            String nom = new Token().generateRandomString() + ext;
+                            Picture pic = new Picture(nom, Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
                             pic = this.pm.save(pic);
                             hspictures.add(pic);
                         }
@@ -333,8 +336,7 @@ public class SerieRessource {
         }catch(Exception e){
             
         }
-            
-        String output = "Fichier disponible";
+        
         return Response.status(200).entity(s).build();
     }
     
