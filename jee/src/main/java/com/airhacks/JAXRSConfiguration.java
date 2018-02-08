@@ -20,6 +20,7 @@ public class JAXRSConfiguration extends Application {
 
         classes.add(org.lpro.provider.cors.CORSRequestFilter.class);
         classes.add(org.lpro.provider.cors.CORSResponseFilter.class);
+        classes.add(org.lpro.provider.AuthentificationFiltre.class);
         classes.add(com.github.phillipkruger.apiee.ApieeService.class);
         classes.add(org.lpro.boundary.account.signup.SignupBoundary.class);
         classes.add(org.lpro.boundary.account.signin.SigninBoundary.class);

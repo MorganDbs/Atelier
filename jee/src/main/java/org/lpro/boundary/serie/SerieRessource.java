@@ -9,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.activation.MimetypesFileTypeMap;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -27,10 +29,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
@@ -39,6 +43,8 @@ import org.lpro.entity.Game;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
+import token.Token;
+
 
 @Stateless
 @Path("series")
@@ -214,7 +220,9 @@ public class SerieRessource {
                             JsonObject json_errors_pictures = errors.build();
                             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
                         }else{
-                            Picture pic = new Picture(pictures.getJsonObject(i).getString("img"), Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
+                            String ext = pictures.getJsonObject(i).getString("img").substring(pictures.getJsonObject(i).getString("img").lastIndexOf("."), pictures.getJsonObject(i).getString("img").length());
+                            String nom = new Token().generateRandomString() + ext;
+                            Picture pic = new Picture(nom, Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
                             pic = this.pm.save(pic);
                             hspictures.add(pic);
                         }
@@ -232,13 +240,10 @@ public class SerieRessource {
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
         
-        JsonObject succes = Json.createObjectBuilder()
-                .add("success", "La série a été crée")
-                .build();
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
 
-        return Response.created(uri).entity(succes).build();
+        return Response.created(uri).entity(newSerie.getId()).build();
     }
     
     private JsonObject buildJsonGames(Serie s, List<Game> g){
@@ -313,5 +318,42 @@ public class SerieRessource {
                 .add("difficulties", difficulties.build())
                 .add("series", series.build())
                 .build();
+    }
+    
+    @POST
+    @Path("upload")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response uploadFichier(MultipartFormDataInput input) {
+
+        String s = "";
+        try{
+            s = input.getFormDataMap().get("serie").get(0).getBodyAsString();
+            this.pm.upload(input, s);
+        }catch(Exception e){
+            
+        }
+        
+        return Response.status(200).entity(s).build();
+    }
+    
+    @GET
+    @Path("{id}/pictures/{picture}")
+    @Produces("image/*")
+    @ApiOperation(value = "Récupère une image", notes = "Récupère une image selon le nom passée dans l'url")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getImage(@PathParam("id") String id, @PathParam("picture") String picture) {
+      File f = new File("/opt/jboss/wildfly/standalone/tmp/img/" + id + "/"+ picture);
+      if (!f.exists()) {
+        throw new WebApplicationException(404);
+      }
+      String mt = new MimetypesFileTypeMap().getContentType(f);
+      return Response.ok(f, mt).build();
     }
 }
