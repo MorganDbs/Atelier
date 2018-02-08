@@ -19,10 +19,10 @@
     <h1>GeoQuizz Sign up</h1>
     <form @submit.prevent="signup()">
       <label for="fname">Nom et prénom</label>
-      <input type="text" v-model="members.fullname" id="fname" name="firstname" placeholder="Votre nom et prénom.." required>
+      <input v-validate="'required|email'" type="text" v-model="members.fullname" id="fname" name="firstname" placeholder="Votre nom et prénom.." required>
 
       <label for="email">Email</label>
-      <input type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
+      <input v-validate="'required|email'" type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
 
       <label for="password">Mot de passe</label>
       <input type="password" v-model="members.password" id="password" name="password" placeholder="Votre mot de passe.." required>

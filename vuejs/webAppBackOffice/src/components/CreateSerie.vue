@@ -18,7 +18,7 @@
 
 
     <div class="profLogout">
-      <button v-on:click="logOut()">Se deconnecter</button>
+      <button v-on:click="signOut()">Se deconnecter</button>
     </div>
   </div>
 
@@ -34,13 +34,40 @@
         <input type="text" v-model="serie.description" id="description" name="description" placeholder="Votre description" required>
 
         <label for="city">Ville</label>
-        <input type="text" v-model="serie.city" id="city" name="city" placeholder="Votre ville" required>
+        <input @change="getGeoloc" type="text" v-model="serie.city" id="city" name="city" placeholder="Votre ville" required>
 
 
         <input type="submit" value="Submit">
       </form>
+
       </div>
-    </div>
+      <div class="divMap">
+        <h2>Choisissez les différents points de votre serie</h2>
+
+        <v-map ref="map" id="map" :zoom=13 :center="[cityCoord.lat,cityCoord.lng]" v-on:l-click="onMapClick">
+          <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+          <v-marker :lat-lng="marker.coords" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
+          <v-popup :height="40">
+            <p>Vous êtes ici !</p>
+          </v-popup>
+          </v-marker>
+
+          <v-marker :v-if="markersToUpload" :icon="markerIcon" v-for="item in markersToUpload" v-on:l-add="togglePopup" :key="1" :lat-lng="item.coords">
+
+            <v-popup >
+              <p>Selectionner une image qui correspondra au point sur la carte</p>
+              <div v-if="!imagePresent">
+                <input v-validate="require|image" type="file" @change="addImage">
+              </div>
+              <div v-else>
+                <img :src="image" />
+              </div>
+            </v-popup>
+          </v-marker>
+        </v-map>
+
+      </div>
+    </div>l
 
 
 
@@ -50,13 +77,32 @@
 <script>
   import axios from 'axios'
   import router from '../router'
+  import Vue2leaflet from 'vue2-leaflet'
+
+  var markerIcon = L.icon({
+    iconUrl: 'static/images/marker-icon.png',
+    shadowUrl: 'static/images/marker-shadow.png',
+    iconSize:     [25, 41],
+    iconAnchor:   [25, 41],
+    popupAnchor:  [-12.5, -40]
+  })
+
   export default {
 
-    name: 'pageCo',
-
+    name: 'createSerie',
 
     data (){
       return {
+        markerIcon:markerIcon,
+        markersToUpload:[],
+        marker:{
+          visible:false,
+          coords: {
+            lat: '',
+            lng: ''
+          },
+        },
+        imagePresent:false,
         serie: {
           name: '',
           description: '',
@@ -68,29 +114,61 @@
           pictures: []
         },
         cityCoord:{
-          lat:'',
-          lng:''
-        }
+          lat:'48.692054',
+          lng:'4.184417'
+        },
+        image:''
       }
 
     },
     methods: {
 
-      logOut(){
+      signOut(){
         sessionStorage.clear()
         alert("You're disconnect");
         router.push({name: 'home'})
 
 
       },
-      createSerie(){
+      togglePopup(marker){
+
+        marker.target.togglePopup();
+      },
+      onMapClick(e) {
+        this.markersToUpload.push({coords:e.latlng})
+
+      },
+      addImage(e){
+          this.imagePresent=true;
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length)
+            return;
+          this.createImage(this.serie.pictures[0])
+        console.log(this.serie.pictures)
+
+      },
+      createImage(file) {
+
+
+          this.image = new Image();
+          var reader = new FileReader();
+          var vm = this;
+
+          reader.onload = (e) => {
+            vm.image = e.target.result;
+          };
+          reader.readAsDataURL(file);
+
+      },
+      getGeoloc(){
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+this.serie.city+`,+FR&key=AIzaSyCdIprtWN6lsubVYIiWCkQUGNEoLj_AxDo`)
           .then(response => {
             // JSON responses are automatically parsed.
-            console.log(response.data.results[0].geometry.location)
             this.cityCoord.lat=response.data.results[0].geometry.location.lat;
             this.cityCoord.lng=response.data.results[0].geometry.location.lng;
-            router.push({name:'map'})
+            this.marker.visible=true;
+            this.marker.coords.lat=response.data.results[0].geometry.location.lat;
+            this.marker.coords.lng=response.data.results[0].geometry.location.lng;
           })
           .catch(e => {
             alert(e)
@@ -118,7 +196,19 @@
     display: inline-block;
     margin: 0 10px;
   }
-
+  input[type=file]{
+    width:100%;
+    background-color: #ADD8E6;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  input[type=file]:hover {
+    background-color:  #ADD8E8;
+  }
   input[type=submit] {
     width:50%;
     background-color: #ADD8E6;
@@ -205,6 +295,8 @@
   .formulaire{
     width: 40vw;
     margin-top:2%;
+    display:flex;
+    flex-direction: column;
   }
 
 

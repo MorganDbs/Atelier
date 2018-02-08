@@ -6,13 +6,16 @@ import router from './router'
 import interceptors from './plugins/Interceptors'
 import BootstrapVue from 'bootstrap-vue'
 import Vue2Leaflet from 'vue2-leaflet';
+import VeeValidate from 'vee-validate';
 
 
 Vue.component('v-map', Vue2Leaflet.Map);
 Vue.component('v-tilelayer', Vue2Leaflet.TileLayer);
 Vue.component('v-marker', Vue2Leaflet.Marker);
+Vue.component('v-popup', Vue2Leaflet.Popup);
 
 Vue.use(BootstrapVue);
+Vue.use(VeeValidate);
 
 require('../node_modules/bootstrap/dist/css/bootstrap.css')
 require('../node_modules/leaflet/dist/leaflet.css')

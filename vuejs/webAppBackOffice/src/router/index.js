@@ -3,8 +3,7 @@ import Router from 'vue-router'
 import signin from '@/components/Signin'
 import signup from '@/components/Signup'
 import home from '@/components/Home'
-import pageCo from '@/components/PageCo'
-import map from '@/components/map'
+import createSerie from '@/components/CreateSerie'
 
 Vue.use(Router)
 
@@ -21,16 +20,10 @@ const router =  new Router({
       component: signup
     },
     {
-      path: '/map',
-      name: 'map',
-      component: map
+      path: '/createSerie',
+      name: 'createSerie',
+      component: createSerie
     },
-    {
-      path: '/pageCo',
-      name: 'pageCo',
-      component: pageCo
-    },
-
     {
       path: '/',
       name: 'home',
@@ -43,13 +36,13 @@ const router =  new Router({
 // Les middlewares
 router.beforeEach((to, from, next) => {
 
-  if (to.name == 'pageCo' && sessionStorage.getItem("isConnected") != "Connect") {
+  if (to.name == 'createSerie' && sessionStorage.getItem("isConnected") != "Connect") {
 
     next({name: 'signin' })
   }
   else if (to.name == 'signin' && sessionStorage.getItem("isConnected") == "Connect" ){
 
-    next({name: 'PageCo' })
+    next({name: 'createSerie' })
   }
   else{
     next()

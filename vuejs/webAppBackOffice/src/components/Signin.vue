@@ -19,7 +19,7 @@
     <h1>GeoQuizz Sign in</h1>
       <form @submit.prevent="signin()">
       <label for="email">Email</label>
-      <input type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
+      <input v-validate="'required|email'" type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
 
       <label for="password">Password</label>
       <input type="password" v-model="members.password" id="password" name="password" placeholder="Votre mot de passe.." required>
@@ -51,10 +51,10 @@ export default {
         sessionStorage.setItem("isConnected", "Connect")
         sessionStorage.setItem("token", response.data.token)
         sessionStorage.setItem("id", response.data.id_users)
-        router.push("PageCo")
+        router.push({name:"createSerie"})
       }).catch((error) => {
 
-        alert(error.response.data);
+        alert(error);
 
       })
     }
