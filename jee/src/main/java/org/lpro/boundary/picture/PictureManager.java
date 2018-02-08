@@ -13,13 +13,14 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.lpro.control.RandomToken;
 import org.lpro.entity.Picture;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.json.simple.JSONObject;
 
 /**
  *
@@ -91,14 +92,18 @@ public class PictureManager {
     private String getFileName(MultivaluedMap<String, String> headers) {
 
         String[] contenuHeader = headers.getFirst("Content-Disposition").split(";");
-        
+
         for (String filename : contenuHeader) {
             if ((filename.trim().startsWith("filename"))) {
                 String[] name = filename.split("=");
-                return name[1].trim().replaceAll("\"", "");
+                String tmp = name[1].trim().replaceAll("\"", "");
+                String ext = tmp.substring(tmp.lastIndexOf("."), tmp.length());
+                String nom = new RandomToken().randomString(32);
+
+                return nom + ext;
             }
         }
-        
+
         return "inconnu";
     }
 }

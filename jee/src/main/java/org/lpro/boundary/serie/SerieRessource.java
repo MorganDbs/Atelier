@@ -35,8 +35,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
@@ -322,11 +320,13 @@ public class SerieRessource {
     @POST
     @Path("upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     public Response uploadFichier(MultipartFormDataInput input) {
-        
-        JSONParser parser = new JSONParser();
+
         String s = "";
-        JSONObject json = null;
         try{
             s = input.getFormDataMap().get("serie").get(0).getBodyAsString();
             this.pm.upload(input, s);
@@ -335,12 +335,17 @@ public class SerieRessource {
         }
             
         String output = "Fichier disponible";
-        return Response.status(200).entity(json).build();
+        return Response.status(200).entity(s).build();
     }
     
     @GET
     @Path("{id}/pictures/{picture}")
     @Produces("image/*")
+    @ApiOperation(value = "Récupère une image", notes = "Récupère une image selon le nom passée dans l'url")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     public Response getImage(@PathParam("id") String id, @PathParam("picture") String picture) {
       File f = new File("/opt/jboss/wildfly/standalone/tmp/img/" + id + "/"+ picture);
       if (!f.exists()) {
