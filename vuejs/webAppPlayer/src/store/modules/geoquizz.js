@@ -60,18 +60,20 @@ export default {
 	},
 	actions: {
 		sendGameInfo: ({commit}, data) => {
-			commit('setNickname', data.nickname)
+			/*commit('setNickname', data.nickname)
+			data.difficulty.distances.reverse()
 			commit('setDifficulty', data.difficulty)
 			
-			router.push({ name: 'game_board' })
-
-			/*api.post('/series', {
+			router.push({ name: 'game_board' })*/
+			
+			api.post('/games', {
 				id_serie: data.serie.id,
 				id_difficulty: data.difficulty.id,
 				nickname: data.nickname
 			})
 			.then((response) => {
 				commit('setNickname', data.nickname)
+				data.difficulty.distances.reverse()
 				commit('setDifficulty', data.difficulty)
 				commit('setSerie', response.data.serie)
 				commit('setToken', response.data.token)
@@ -79,7 +81,7 @@ export default {
 			})
 			.catch((error) => {
 				console.log(error)
-			})*/
+			})
 		},
 		setScore: ({commit}, data) => {
 			commit('setScore', data)

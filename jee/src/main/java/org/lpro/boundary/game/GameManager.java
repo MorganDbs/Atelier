@@ -47,6 +47,12 @@ public class GameManager {
         return q.getResultList();
     }
     
+    public List<Game> findBySerieIdAndOrderByScore(Serie s) {
+        String query = "SELECT g FROM Game g WHERE g.id_serie = '" + s.getId() + "' ORDER BY g.score DESC";
+        Query q = this.em.createQuery(query);
+        return q.getResultList();
+    }
+    
     public Game findBySerieIdAndToken(Serie s, String token) {
         TypedQuery<Game> query = em.createQuery("SELECT g FROM Game g WHERE g.id_serie = '" + s.getId() + "' and token = '"+token+"'", Game.class);
         return query.getSingleResult();
