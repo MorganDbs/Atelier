@@ -32,7 +32,7 @@
 				<b-row class="justify-content-md-center">
 					<b-col sm="12" md="3" lg="4" :key="serie.id" v-for="serie in series">
 						<b-card-group deck class="mb-5">
-							<b-card :img-src="serie.img" :img-alt="serie.name" img-top>
+							<b-card :img-src="serie.picture" :img-alt="serie.name" img-top>
 								<p class="card-text">
 									<h5>{{ serie.name }}</h5>
 									Ville : {{ serie.city }}<br />{{ serie.description }}

@@ -1,9 +1,9 @@
 <template>
 	<div class="wrapper">
-		<v-map id="map" ref="map" :zoom="map.zoom" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" :center="map.position">
+		<v-map id="map" ref="map" :zoom="map.zoom" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" :center="map.position" :options="{zoomControl: false}">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-on:l-add="bindPopup" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="icon">
-				<v-popup red="popup" :popupopen="true">
+				<v-popup>
 					<h4>GeoQuizz</h4>
 					<p>Un jeu amusant où tu dois positionner une photo sur la carte de ta ville sans te tromper et plus vite que les autres !</p>
 					<router-link :to="{name: 'game_index'}" class="btn btn-success btn-block">Jouer</router-link>
@@ -43,8 +43,7 @@
 						lat: 48.6906765, 
 						lng: 6.1764079
 					}
-				},
-				markers: []
+				}
 			}
 		},
 		components: {
@@ -53,9 +52,6 @@
 			'v-marker': Vue2Leaflet.Marker,
 			'v-group': Vue2Leaflet.LayerGroup,
 			'v-popup': Vue2Leaflet.Popup
-		},
-		created() {
-      		this.markers.push(this.marker)
 		},
 		methods: {
 			bindPopup(marker) {
@@ -77,7 +73,7 @@
 	.leaflet-container a {
 		color: #fff;
 	}
-	.leaflet-control-container, .leaflet-popup-close-button {
+	.leaflet-popup-close-button {
 		display: none;
 	}
 </style>

@@ -15,7 +15,7 @@ import java.util.Set;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQuery(name="Multiplier.findAll",query="SELECT m FROM Multiplier m")
-public class Multiplier implements Serializable{
+public class Multiplier implements Serializable, Comparable<Multiplier> {
 
     @Id
     private String id;
@@ -59,5 +59,10 @@ public class Multiplier implements Serializable{
 
     public void setDifficulty(Set<Difficulty> difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public int compareTo(Multiplier multiplier)
+    {
+        return Integer.compare(this.getMultiplier(), multiplier.getMultiplier());
     }
 }
