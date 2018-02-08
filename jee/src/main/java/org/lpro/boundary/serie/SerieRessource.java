@@ -9,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.activation.MimetypesFileTypeMap;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -27,10 +29,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
 import org.lpro.boundary.picture.PictureManager;
@@ -39,6 +45,7 @@ import org.lpro.entity.Game;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
+
 
 @Stateless
 @Path("series")
@@ -232,13 +239,10 @@ public class SerieRessource {
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
         
-        JsonObject succes = Json.createObjectBuilder()
-                .add("success", "La série a été crée")
-                .build();
 
         URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
 
-        return Response.created(uri).entity(succes).build();
+        return Response.created(uri).entity(newSerie.getId()).build();
     }
     
     private JsonObject buildJsonGames(Serie s, List<Game> g){
@@ -313,5 +317,36 @@ public class SerieRessource {
                 .add("difficulties", difficulties.build())
                 .add("series", series.build())
                 .build();
+    }
+    
+    @POST
+    @Path("upload")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadFichier(MultipartFormDataInput input) {
+        
+        JSONParser parser = new JSONParser();
+        String s = "";
+        JSONObject json = null;
+        try{
+            s = input.getFormDataMap().get("serie").get(0).getBodyAsString();
+            this.pm.upload(input, s);
+        }catch(Exception e){
+            
+        }
+            
+        String output = "Fichier disponible";
+        return Response.status(200).entity(json).build();
+    }
+    
+    @GET
+    @Path("{id}/pictures/{picture}")
+    @Produces("image/*")
+    public Response getImage(@PathParam("id") String id, @PathParam("picture") String picture) {
+      File f = new File("/opt/jboss/wildfly/standalone/tmp/img/" + id + "/"+ picture);
+      if (!f.exists()) {
+        throw new WebApplicationException(404);
+      }
+      String mt = new MimetypesFileTypeMap().getContentType(f);
+      return Response.ok(f, mt).build();
     }
 }
