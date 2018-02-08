@@ -3,5 +3,7 @@ import config from '@/config/config'
 
 export default axios.create({
 	baseURL: config.url,
-	withCredentials: true
+	headers: {
+		'Content-Type': 'application/json'
+	}
 })

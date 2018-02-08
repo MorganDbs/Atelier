@@ -62,8 +62,8 @@ public class GameRessource {
         JsonObjectBuilder errors = Json.createObjectBuilder();
         String errorsList = "";
         boolean flag = false;
-        
-        
+
+
         if(!jsonScore.containsKey("id_serie") || jsonScore.isNull("id_serie") || jsonScore.getString("id_serie").isEmpty()){
             errorsList += "Il faut renseigner un id de série. ";
             flag = true;

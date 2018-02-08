@@ -1,15 +1,35 @@
 <template>
 	<div class="wrapper">
-		<v-map id="map" ref="map" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom" :center="serie.coords" v-on:l-click="addMarker">
+		<v-map id="map" ref="serie" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom" :options="{zoomControl: false}" :center="serie.coords" v-on:l-click="addMarker">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-if="marker" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="pinIcon">
 			</v-marker>
-			<v-marker v-if="serie" v-for="picture in serie.pictures" :key="picture.id" :lat-lng="picture.coords" :visible="true" :draggable="false" :icon="markerIcon">
+			<v-marker v-if="serie" v-for="picture in pictures" :key="picture.id" :lat-lng="picture.coords" :visible="true" :draggable="false" :icon="markerIcon">
 			</v-marker>
 		</v-map>
+
 		<div class="board">
 			<div class="timer">
-				
+				<vue-circle
+        			:progress="100"
+        			:size="100"
+        			:reverse="false"
+        			line-cap="round"
+        			:fill="timer.fill"
+        			empty-fill="rgba(0, 0, 0, 0.3)"
+        			:animation="{ duration: 5000 }"
+        			:start-angle="80"
+        			insert-mode="append"
+        			:thickness="5"
+        			:show-percent="false"
+        			@vue-circle-end="timer_finished"
+        			class="circle-timer">
+        			<p class="multiplier">x{{ difficulty.multipliers[multiplier].multiplier }}</p>
+				</vue-circle>
+			</div>
+			<div class="score">
+				<h5>Score</h5>
+				<p>{{ score }}</p>
 			</div>
 		</div>
 	</div>
@@ -18,6 +38,7 @@
 <script>
 	import Vue2Leaflet from 'vue2-leaflet'
 	import store from '@/store'
+	import VueCircle from 'vue2-circle-progress'
 	import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 	var pinIcon = L.icon({
@@ -41,34 +62,12 @@
 				pinIcon: pinIcon,
 				markerIcon: markerIcon,
 				marker: null,
-				serie: {
-			        id: "cfd653ef-002e-4bf6-85ef-0217f1aef892",
-			        name: "th",
-			        city: "th",
-			        description: "Un quizz sur la ville de Nancy",
-			        coords: {
-			            lat: 48.6884439,
-			            lng: 6.1764079
-			        },
-			        pictures: [
-			            {
-			            	id: 1,
-			                picture: "https://www.petitfute.com/medias/professionnel/30049/premium/600_450/223989-nancy-place-stanislas.jpg",
-			                coords: {
-			                    lat: 48.6936184,
-			                    lng: 6.1832413
-			                }
-			            },
-			            {
-			            	id: 2,
-			                picture: "http://www.arte-charpentier.com/wp-content/uploads/2017/02/Ar_EQU_Nancy_gare_Laurent_Durand_Exterieur_Exterieur-32.jpg",
-			                coords: {
-			                    lat: 48.6891985,
-			                    lng: 6.1737367
-			                }
-			            }
-			        ]
-			    }
+				timer: {
+					fill: {
+						color: '#FFC312'
+					}
+				},
+				multiplier: 0
 			}
 		},
 		components: {
@@ -76,20 +75,23 @@
 			'v-tilelayer' :Vue2Leaflet.TileLayer,
 			'v-marker': Vue2Leaflet.Marker,
 			'v-group': Vue2Leaflet.LayerGroup,
-			'v-popup': Vue2Leaflet.Popup
+			'v-popup': Vue2Leaflet.Popup,
+			VueCircle
 		},
 		computed: {
 			...mapGetters(
                 {
                     difficulty: 'geoquizz/getDifficulty',
-                    // serie: 'geoquizz/getSerie'
+                    serie: 'geoquizz/getSerie',
+                    pictures: 'geoquizz/getPictures',
+                    score: 'geoquizz/getScore'
                 }
             )
 		},
 		methods: {
 			addMarker(e) {
 				this.marker = { position: e.latlng }
-				let picture = this.serie.pictures[0]
+				let picture = this.pictures[0]
 				let distance = (e.latlng.distanceTo(picture.coords) / 1000).toFixed(2) // convert meter to kilometer
 				console.log(`${distance} km`)
 				// TODO : ajouter un timer et calculer les points selon le temps de réponse
@@ -102,7 +104,10 @@
 					return distance < e.distance
 				})
 				console.log("---> " + a.points)
-			}
+			},
+		    timer_finished(event) {
+		   		console.log("Circle progress end");
+		    }
 		}
 	}
 
@@ -119,15 +124,46 @@
 		z-index: 1;
 		cursor: pointer;
 	}
-	.leaflet-control-container {
-		display: none;
-	}
 	.board {
-		width: 200px;
-		height: 50px;
-		background-color: #red;
+		width: 270px;
+		height: 125px;
+		background-color: #2c3e50;
 		z-index: 99;
-		bottom: 0;
-		left: 50px;
+		bottom: 40px;
+		left: 40px;
+		padding: 0;
+		position: absolute;
+	}
+	.board .timer {
+		width: 135px;
+		height: inherit;
+		padding: 10px;
+		margin: 0;
+		box-sizing: border-box;
+		display: inline-block;
+		float: left;
+		background-color: #2c3e50;
+	}
+	.board .timer .circle-timer {
+		margin: 3px 0 0 8px;
+	}
+	.board .timer .circle-timer .multiplier {
+		color: #FFC312;
+		margin-top: 3px;
+		font-size: 2em;
+	}
+	.board .score {
+		width: 135px;
+		height: inherit;
+		padding: 10px;
+		margin: 0;
+		box-sizing: border-box;
+		display: inline-block;
+		float: left;
+		background-color: #34495e;
+
+		color: #FFC312;
+		font-size: 3em;
+		text-align: center;
 	}
 </style>
