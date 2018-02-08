@@ -195,7 +195,7 @@
         console.log(this.serie.serie.pictures)
         configApi.post('series', this.serie, {headers: { 'content-type': 'application/json' }}).then(response => {
           console.log(response.data);
-          configApi.post('series/'+response.data.id+'/upload', formData, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
+          configApi.post('series/'+response.data+'/upload', formData, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
             console.log(response)
           }).catch(error =>{
             console.log(error)
