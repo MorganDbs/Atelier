@@ -35,8 +35,13 @@
 							<b-card :img-src="serie.picture" :img-alt="serie.name" img-top>
 								<p class="card-text">
 									<h5>{{ serie.name }}</h5>
-									Ville : {{ serie.city }}<br />{{ serie.description }}
-									<b-button variant="primary" class="mt-4 btn-block" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
+									<p>Ville : {{ serie.city }}<br />{{ serie.description }}</p>
+									<center>
+											<b-button variant="primary" class="mt-4" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
+											<router-link :to="{ name: 'score_board', params: { id: serie.id } }">
+												<b-button variant="success" class="mt-4">Classement</b-button>
+											</router-link>
+									</center>
 								</p>
 							</b-card>
 						</b-card-group>

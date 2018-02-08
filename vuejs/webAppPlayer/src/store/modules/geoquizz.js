@@ -14,7 +14,8 @@ export default {
 			nickname: null,
 			score: 0,
 			token: null
-		}
+		},
+		scores: null
 	},
 	mutations: {
 		setNickname: (state, nickname) => {
@@ -51,6 +52,9 @@ export default {
 		},
 		setScore: (state, score) => {
 			state.game.score = score
+		},
+		setScores: (state, scores) => {
+			state.scores = scores
 		}
 	},
 	getters: {
@@ -77,8 +81,10 @@ export default {
 		},
 		getScore: (state) => {
 			return state.game.score
+		},
+		getScores: (state) => {
+			return state.scores
 		}
-
 	},
 	actions: {
 		sendGameInfo: ({commit}, data) => {			
@@ -118,6 +124,15 @@ export default {
 			})
 			.then((response) => {
 
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+		},
+		getScores: ({commit}, serie_id) => {
+			api.get(`/series/${serie_id}/games`)
+			.then((response) => {
+				commit('setScores', response.data.games)
 			})
 			.catch((error) => {
 				console.log(error)
