@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "bootsrap-vue": "^2.0.0-rc.1",
+    "bootstrap-vue": "^2.0.0-rc.1",
     "bootstrap": "^4.0.0",
     "vee-validate": "^2.0.3",
     "vue": "^2.5.2",

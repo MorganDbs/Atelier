@@ -3,8 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import interceptors from './plugins/Interceptors'
-import BootstrapVue from 'bootstrap-vue'
+import interceptors from './plugins/Interceptors';
+import BootstrapVue from 'bootstrap-vue';
 import Vue2Leaflet from 'vue2-leaflet';
 import VeeValidate from 'vee-validate';
 
