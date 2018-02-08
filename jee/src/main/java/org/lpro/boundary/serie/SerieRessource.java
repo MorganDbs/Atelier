@@ -274,7 +274,7 @@ public class SerieRessource {
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
-                    .add("picture", serie.getPicture().iterator().next().getUrl())
+                    .add("picture", (!serie.getPicture().isEmpty()) ? serie.getPicture().iterator().next().getUrl() : "")
                     .build();
 
             series.add(ser);
