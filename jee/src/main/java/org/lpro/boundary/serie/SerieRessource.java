@@ -102,7 +102,7 @@ public class SerieRessource {
     }
 
     @POST
-    //@Secured
+    @Secured
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
@@ -250,7 +250,7 @@ public class SerieRessource {
     
     @PUT
     @Path("{id}")
-    //@Secured
+    @Secured
     @ApiOperation(value = "Ajoute des images dans une série", notes = "Ajoute des images à une série à partir du JSON fourni")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
@@ -344,7 +344,7 @@ public class SerieRessource {
     
     @POST
     @Path("{id}/upload")
-    //@Secured
+    @Secured
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
     @ApiResponses(value = {
@@ -358,7 +358,7 @@ public class SerieRessource {
     
     @PUT
     @Path("{id}/upload")
-    //@Secured
+    @Secured
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
     @ApiResponses(value = {
