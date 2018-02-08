@@ -102,7 +102,7 @@ public class SerieRessource {
     }
 
     @POST
-    @Secured
+    //@Secured
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
@@ -157,7 +157,7 @@ public class SerieRessource {
             if(!serieCoord.containsKey("lat") || serieCoord.isNull("lat") || serieCoord.getString("lat").isEmpty()){
                 errorsList += "Il faut renseigner la latitude de la série. ";
                 flag_errors = true;
-            }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$", serieCoord.getString("lat"))){
+            }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$", serieCoord.getString("lat"))){
                 errorsList += "Il faut respecter la casse de la latitude de la ville. ";
                 flag_errors = true;
             }
@@ -165,7 +165,7 @@ public class SerieRessource {
             if(!serieCoord.containsKey("lng") || serieCoord.isNull("lng") || serieCoord.getString("lng").isEmpty()){
                 errorsList += "Il faut renseigner la longitude de la série. ";
                 flag_errors = true;
-            }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoord.getString("lng"))){
+            }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoord.getString("lng"))){
                 errorsList += "Il faut respecter la casse de la longitude de la ville. ";
                 flag_errors = true;
             }
@@ -204,7 +204,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lat") || serieCoordPictures.isNull("lat") || serieCoordPictures.getString("lat").isEmpty()){
                             errorsList += "Il faut renseigner la lattitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la lattitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
@@ -212,7 +212,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lng") || serieCoordPictures.isNull("lng") || serieCoordPictures.getString("lng").isEmpty()){
                             errorsList += "Il faut renseigner la longitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la longitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
@@ -297,7 +297,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lat") || serieCoordPictures.isNull("lat") || serieCoordPictures.getString("lat").isEmpty()){
                             errorsList += "Il faut renseigner la lattitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la lattitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
@@ -305,7 +305,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lng") || serieCoordPictures.isNull("lng") || serieCoordPictures.getString("lng").isEmpty()){
                             errorsList += "Il faut renseigner la longitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la longitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
