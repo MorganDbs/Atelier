@@ -10,9 +10,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import javax.inject.Inject;
 
 import org.lpro.control.RandomToken;
 import org.lpro.entity.Picture;
@@ -21,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.lpro.boundary.serie.SerieManager;
 
 /**
  *
@@ -30,6 +34,9 @@ public class PictureManager {
     
     @PersistenceContext
     EntityManager em;
+    
+    @Inject
+    SerieManager sm;
     
     public Picture save(Picture p){
         p.setId(UUID.randomUUID().toString());
@@ -44,15 +51,21 @@ public class PictureManager {
             } catch(SecurityException se) { }
         }
         
+        Set<Picture> pics = this.sm.findById(serie_id).getPicture();
+        List<String> pics_name = new ArrayList();
+        for (Picture p : pics) {
+            pics_name.add(p.getUrl());
+        }
+
         Map<String, List<InputPart>> formulaire = input.getFormDataMap();
         List<InputPart> inputParts = formulaire.get("file");
         
-        for (InputPart ip : inputParts) {
-            MultivaluedMap<String, String> headers = ip.getHeaders();
-            String filename = getFileName(headers);
+        for(int i= 0; i < inputParts.size(); i++){
+            MultivaluedMap<String, String> headers = inputParts.get(i).getHeaders();
+            String filename = getFileName(headers, pics_name.get(i).replaceFirst("[.][^.]+$", ""));
             
             try {
-                InputStream is = ip.getBody(InputStream.class,null);
+                InputStream is = inputParts.get(i).getBody(InputStream.class,null);
                 byte[] bytes = PictureManager.toByteArray(is);
                 System.out.println(filename);
                 writeFile(bytes,"/opt/jboss/wildfly/standalone/tmp/img/"+serie_id+"/"+filename);
@@ -89,7 +102,7 @@ public class PictureManager {
         fop.close();
     }
 
-    private String getFileName(MultivaluedMap<String, String> headers) {
+    private String getFileName(MultivaluedMap<String, String> headers, String s) {
 
         String[] contenuHeader = headers.getFirst("Content-Disposition").split(";");
 
@@ -98,7 +111,7 @@ public class PictureManager {
                 String[] name = filename.split("=");
                 String tmp = name[1].trim().replaceAll("\"", "");
                 String ext = tmp.substring(tmp.lastIndexOf("."), tmp.length());
-                String nom = new RandomToken().randomString(32);
+                String nom = s;
 
                 return nom + ext;
             }
