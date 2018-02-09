@@ -64,6 +64,8 @@ public class SigninBoundary {
                 String token = this.issueToken(mail);
 
                 return Response.ok(Json.createObjectBuilder()
+                        .add("fullname", one.getFullname())
+                        .add("mail", one.getMail())
                         .add("token", token)
                         .add("success", "Connexion réussie")
                         .build()

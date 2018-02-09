@@ -43,6 +43,45 @@ public class PictureManager {
         return this.em.merge(p);
     }
     
+    public boolean uploadToExistingSerie(MultipartFormDataInput input, String serie_id){
+        File img = new File("/opt/jboss/wildfly/standalone/tmp/img/"+serie_id+"/");
+        if (!img.exists()) {
+            try {
+                img.mkdir();
+            } catch(SecurityException se) { }
+        }
+        
+        Set<Picture> pics = this.sm.findById(serie_id).getPicture();
+        List<String> pics_name_glob = new ArrayList();
+        for (Picture p : pics) {
+            pics_name_glob.add(p.getUrl());
+        }
+        
+        
+        
+        Map<String, List<InputPart>> formulaire = input.getFormDataMap();
+        List<InputPart> inputParts = formulaire.get("file");
+        
+        int limit = pics_name_glob.size() - inputParts.size();
+        List<String> pics_name = new ArrayList<String>(pics_name_glob.subList(limit, pics_name_glob.size()));
+        
+        for(int i= 0; i < inputParts.size(); i++){
+            MultivaluedMap<String, String> headers = inputParts.get(i).getHeaders();
+            String filename = getFileName(headers, pics_name.get(i).replaceFirst("[.][^.]+$", ""));
+            
+            try {
+                InputStream is = inputParts.get(i).getBody(InputStream.class,null);
+                byte[] bytes = PictureManager.toByteArray(is);
+                System.out.println(filename);
+                writeFile(bytes,"/opt/jboss/wildfly/standalone/tmp/img/"+serie_id+"/"+filename);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+        
+        return true;
+    }
+    
     public boolean upload(MultipartFormDataInput input, String serie_id){
         File img = new File("/opt/jboss/wildfly/standalone/tmp/img/"+serie_id+"/");
         if (!img.exists()) {

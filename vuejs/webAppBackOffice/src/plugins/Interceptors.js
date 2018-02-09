@@ -1,4 +1,4 @@
-/**
+
 import Vue from 'vue'
 import router from '../router'
 import confApi from '../configApi'
@@ -37,4 +37,4 @@ const MyPlugin = {
 }
 
 export default MyPlugin;
-*/
+

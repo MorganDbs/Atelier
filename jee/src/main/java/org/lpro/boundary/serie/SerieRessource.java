@@ -26,6 +26,7 @@ import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,6 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import static org.glassfish.jersey.uri.UriComponent.Type.PATH;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
@@ -75,6 +77,27 @@ public class SerieRessource {
         List<Serie> s = this.sm.findAll();
         List<Difficulty> d = this.dm.findAll();
         return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d)).build();
+    }
+    
+    @GET
+    @Path("{id}")
+    @ApiOperation(value = "Récupère une serie", notes = "Renvoie le JSON associé à une serie")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getSerie(@PathParam("id") String id, @Context UriInfo uriInfo) {
+        Serie s = this.sm.findById(id);
+        
+        if(s == null){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Pas de série pour cette id")
+                            .build()
+            ).build();
+        }
+        
+        return Response.status(Response.Status.OK).entity(buildJsonOneSerie(s)).build();
     }
     
     @GET
@@ -126,12 +149,12 @@ public class SerieRessource {
         if(!jsonSerie.containsKey("name") || jsonSerie.isNull("name") || jsonSerie.getString("name").isEmpty()){
             errorsList += "Il faut renseigner un nom de série. ";
             flag_errors = true;
-        }else if(!Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("name"))){
+        }else if(!Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("name"))){
             errorsList += "Il faut respecter la casse du nom de série. ";
             flag_errors = true;
         }
 
-        if(jsonSerie.containsKey("description") && Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("description"))){
+        if(jsonSerie.containsKey("description") && Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("description"))){
 
         }else{
             errorsList += "Il faut respecter la casse de la description. ";
@@ -141,7 +164,7 @@ public class SerieRessource {
         if(!jsonSerie.containsKey("city") || jsonSerie.isNull("city") || jsonSerie.getString("city").isEmpty()){
             errorsList += "Il faut renseigner une ville. ";
             flag_errors = true;
-        }else if(!Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("city"))){
+        }else if(!Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("city"))){
             errorsList += "Il faut respecter la casse du nom de city. ";
             flag_errors = true;
         }
@@ -155,7 +178,7 @@ public class SerieRessource {
             if(!serieCoord.containsKey("lat") || serieCoord.isNull("lat") || serieCoord.getString("lat").isEmpty()){
                 errorsList += "Il faut renseigner la latitude de la série. ";
                 flag_errors = true;
-            }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$", serieCoord.getString("lat"))){
+            }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$", serieCoord.getString("lat"))){
                 errorsList += "Il faut respecter la casse de la latitude de la ville. ";
                 flag_errors = true;
             }
@@ -163,7 +186,7 @@ public class SerieRessource {
             if(!serieCoord.containsKey("lng") || serieCoord.isNull("lng") || serieCoord.getString("lng").isEmpty()){
                 errorsList += "Il faut renseigner la longitude de la série. ";
                 flag_errors = true;
-            }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoord.getString("lng"))){
+            }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoord.getString("lng"))){
                 errorsList += "Il faut respecter la casse de la longitude de la ville. ";
                 flag_errors = true;
             }
@@ -202,7 +225,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lat") || serieCoordPictures.isNull("lat") || serieCoordPictures.getString("lat").isEmpty()){
                             errorsList += "Il faut renseigner la lattitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la lattitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
@@ -210,7 +233,7 @@ public class SerieRessource {
                         if(!serieCoordPictures.containsKey("lng") || serieCoordPictures.isNull("lng") || serieCoordPictures.getString("lng").isEmpty()){
                             errorsList += "Il faut renseigner la longitude de l'image: "+ (i+1) +". ";
                             flag_errors_pictures = true;
-                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",serieCoordPictures.getString("lat"))){
+                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
                             errorsList += "Il faut respecter la casse de la longitude de l'image: "+ (i+1) + ". ";
                             flag_errors_pictures = true;
                         }
@@ -246,6 +269,145 @@ public class SerieRessource {
         return Response.created(uri).entity(newSerie.getId()).build();
     }
     
+    @PUT
+    @Path("{id}")
+    @Secured
+    @ApiOperation(value = "Ajoute des images dans une série", notes = "Ajoute des images à une série à partir du JSON fourni")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response addPictureToSerie(@PathParam("id") String id, JsonObject picturesObject, @Context UriInfo uriInfo) throws java.text.ParseException {
+        
+        Serie s = this.sm.findById(id);
+        
+        if(s == null){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Pas de série pour cette id")
+                            .build()
+            ).build();
+        }
+        
+        JsonObjectBuilder errors = Json.createObjectBuilder();
+        JsonArray pictures = null;
+        Set<Picture> hspictures = new HashSet<Picture>();
+        String errorsList = "";
+        Boolean flag_errors_pictures = false;
+
+
+        if(!picturesObject.containsKey("pictures") || picturesObject.isNull("pictures")){
+            errorsList += "Il faut renseigner les images d'une série. ";
+            flag_errors_pictures = true;
+        }else{
+            pictures = picturesObject.getJsonArray("pictures");
+            System.out.println("taille: " + pictures.size());
+
+                for(int i = 0; i < pictures.size(); i++){
+                    if(!pictures.getJsonObject(i).containsKey("img") || pictures.getJsonObject(i).isNull("img") || pictures.getJsonObject(i).getString("img").isEmpty()){
+                        errorsList += "Il faut renseigner un lien d'image pour l'image: " + (i+1) +". ";
+                        flag_errors_pictures = true;
+                    }
+
+                    if(!pictures.getJsonObject(i).containsKey("coords") || pictures.getJsonObject(i).isNull("coords")){
+                        errorsList += "Il faut renseigner les coordonnées de l'image: "+ (i+1) +". ";
+                        flag_errors_pictures = true;
+                    }else{
+                        JsonObject serieCoordPictures = pictures.getJsonObject(i).getJsonObject("coords");
+
+                        if(!serieCoordPictures.containsKey("lat") || serieCoordPictures.isNull("lat") || serieCoordPictures.getString("lat").isEmpty()){
+                            errorsList += "Il faut renseigner la lattitude de l'image: "+ (i+1) +". ";
+                            flag_errors_pictures = true;
+                        }else if(!Pattern.matches("^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
+                            errorsList += "Il faut respecter la casse de la lattitude de l'image: "+ (i+1) + ". ";
+                            flag_errors_pictures = true;
+                        }
+
+                        if(!serieCoordPictures.containsKey("lng") || serieCoordPictures.isNull("lng") || serieCoordPictures.getString("lng").isEmpty()){
+                            errorsList += "Il faut renseigner la longitude de l'image: "+ (i+1) +". ";
+                            flag_errors_pictures = true;
+                        }else if(!Pattern.matches("^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,20})?))$",serieCoordPictures.getString("lat"))){
+                            errorsList += "Il faut respecter la casse de la longitude de l'image: "+ (i+1) + ". ";
+                            flag_errors_pictures = true;
+                        }
+
+                        if(flag_errors_pictures){
+                            errors.add("errors", errorsList);
+                            JsonObject json_errors_pictures = errors.build();
+                            return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
+                        }else{
+                            String ext = pictures.getJsonObject(i).getString("img").substring(pictures.getJsonObject(i).getString("img").lastIndexOf("."), pictures.getJsonObject(i).getString("img").length());
+                            String nom = new Token().generateRandomString() + ext;
+                            Picture pic = new Picture(nom, Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
+                            pic = this.pm.save(pic);
+                            hspictures.add(pic);
+                        }
+                    }
+                
+            }
+        }
+
+        if(flag_errors_pictures){
+            errors.add("errors", errorsList);
+            JsonObject json_errors_pictures = errors.build();
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
+        }
+        
+        
+       
+        Serie newSerie = this.sm.saveNewPicturesSeries(s, hspictures);
+        
+        URI uri = uriInfo.getAbsolutePathBuilder().path("/"+newSerie.getId()).build();
+
+        return Response.created(uri).entity(newSerie.getId()).build();
+    }
+    
+    
+    @POST
+    @Path("{id}/upload")
+    @Secured
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response uploadFichier(@PathParam("id") String id, MultipartFormDataInput input) {
+
+        this.pm.upload(input, id);
+        return Response.status(200).entity(id).build();
+    }
+    
+    @PUT
+    @Path("{id}/upload")
+    @Secured
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response addMorePictures(@PathParam("id") String id, MultipartFormDataInput input) {
+
+        this.pm.uploadToExistingSerie(input, id);
+        return Response.status(200).entity(id).build();
+    }
+    
+    @GET
+    @Path("{id}/pictures/{picture}")
+    @Produces("image/*")
+    @ApiOperation(value = "Récupère une image", notes = "Récupère une image selon le nom passée dans l'url")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getImage(@PathParam("id") String id, @PathParam("picture") String picture) {
+      File f = new File("/opt/jboss/wildfly/standalone/tmp/img/" + id + "/"+ picture);
+      if (!f.exists()) {
+        throw new WebApplicationException(404);
+      }
+      String mt = new MimetypesFileTypeMap().getContentType(f);
+      return Response.ok(f, mt).build();
+    }
+    
     private JsonObject buildJsonGames(Serie s, List<Game> g){
         JsonArrayBuilder games = Json.createArrayBuilder();
 
@@ -265,6 +427,18 @@ public class SerieRessource {
                 .add("games", games)
                 .build();
     }
+    
+    private JsonObject buildJsonOneSerie(Serie serie){
+        return Json.createObjectBuilder()
+                    .add("id", serie.getId())
+                    .add("name", serie.getName())
+                    .add("city", serie.getCity())
+                    .add("description", serie.getDescription())
+                    .add("lat", serie.getLat())
+                    .add("lng", serie.getLng())
+                    .build();
+    }
+    
     private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
 
@@ -318,42 +492,5 @@ public class SerieRessource {
                 .add("difficulties", difficulties.build())
                 .add("series", series.build())
                 .build();
-    }
-    
-    @POST
-    @Path("upload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @ApiOperation(value = "Importe une image", notes = "Importe une image et la sauveagrde sur le serveur")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "Internal server error")})
-    public Response uploadFichier(MultipartFormDataInput input) {
-
-        String s = "";
-        try{
-            s = input.getFormDataMap().get("serie").get(0).getBodyAsString();
-            this.pm.upload(input, s);
-        }catch(Exception e){
-            
-        }
-        
-        return Response.status(200).entity(s).build();
-    }
-    
-    @GET
-    @Path("{id}/pictures/{picture}")
-    @Produces("image/*")
-    @ApiOperation(value = "Récupère une image", notes = "Récupère une image selon le nom passée dans l'url")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Not Found"),
-            @ApiResponse(code = 500, message = "Internal server error")})
-    public Response getImage(@PathParam("id") String id, @PathParam("picture") String picture) {
-      File f = new File("/opt/jboss/wildfly/standalone/tmp/img/" + id + "/"+ picture);
-      if (!f.exists()) {
-        throw new WebApplicationException(404);
-      }
-      String mt = new MimetypesFileTypeMap().getContentType(f);
-      return Response.ok(f, mt).build();
     }
 }

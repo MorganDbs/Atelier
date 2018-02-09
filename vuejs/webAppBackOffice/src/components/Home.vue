@@ -3,9 +3,9 @@
     <div classe="header">
       <div class="jumbotron">
 
-          <div classe="img">
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
-          </div>
+        <div classe="img">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
+        </div>
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
           <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
@@ -16,90 +16,59 @@
 
     </div>
     <h1>Welcome</h1>
-    <form @submit.prevent="signin()">
-      <input type="submit" value="SignIn">
-    </form>
-
-    <form @submit.prevent="signup()">
-      <input type="submit" value="SignUp">
-    </form>
-
+    <div class="formulaire">
+      <router-link class="btnCo" to="signin">SignIn</router-link>
+      <router-link class="btnCo" to="signup">SignUp</router-link>
+    </div>
   </div>
 </template>
 
 <script>
- // import confApi from '../configApi'
+  // import configApi from '../configApi'
   import router from '../router'
 
   export default {
-    name: 'Home',
-    methods: {
-      signin(){
-        router.push('Signin')
-      },
-      signup(){
-        router.push('Signup')
-      },
-    }
+    name: 'home',
   }
 
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-input[type=text], select {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-input[type=password], select {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+  h1, h2 {
+    font-weight: normal;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
+  a {
+    color: #42b983;
+  }
+  .btnCo {
+    width:50vw;
+    background-color: #ADD8E6;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-input[type=submit] {
-  width:50%;
-  background-color: #ADD8E6;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+  .btnCo:hover {
+    background-color: #ADD8E8;
+  }
 
-input[type=submit]:hover {
-  background-color: #ADD8E8;
-}
-
-div {
-  border-radius: 5px;
-  background-color:white;
-  padding: 20px;
-}
+  div {
+    border-radius: 5px;
+    background-color:white;
+    padding: 20px;
+  }
   .img{
     background-color: cornflowerblue;
     align-items: flex-start;
@@ -112,5 +81,14 @@ div {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
+  }
+  .formulaire{
+    width: 100%;
+    margin-top:2%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: #f2f2f2;
   }
 </style>

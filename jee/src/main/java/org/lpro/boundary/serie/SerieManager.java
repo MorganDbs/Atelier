@@ -49,6 +49,11 @@ public class SerieManager {
         return this.em.merge(s);
     }
     
+    public Serie saveNewPicturesSeries(Serie s, Set<Picture> p){
+        s.getPicture().addAll(p);
+        return this.em.merge(s);
+    }
+    
     public List<Picture> pickRandomPictures(Serie s, int nbr){
         List<Integer> indexes = new ArrayList<>();
         List<Picture> res = new ArrayList<>();

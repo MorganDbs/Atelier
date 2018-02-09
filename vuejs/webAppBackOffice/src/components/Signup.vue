@@ -1,23 +1,28 @@
 <template>
   <div class="hello">
     <div classe="header">
-      <div class="jumbotron jumbotron-fluid">
-          <div classe="img">
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
-          </div>
-          <h1 class="display-4">Fluid jumbotron</h1>
-          <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+      <div class="jumbotron">
+
+        <div classe="img">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="GeoQuizz">
+        </div>
+        <div class="descGeoquizz">
+          <h1 class="display-4">Geo Quizz</h1>
+          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">C'est partie !</p>
+        </div>
       </div>
+      <hr/>
 
     </div>
-<div class="bloc">
+    <div class="bloc">
     <h1>GeoQuizz Sign up</h1>
     <form @submit.prevent="signup()">
       <label for="fname">Nom et prénom</label>
-      <input type="text" v-model="members.fullname" id="fname" name="firstname" placeholder="Votre nom et prénom.." required>
+      <input v-validate="'required|email'" type="text" v-model="members.fullname" id="fname" name="firstname" placeholder="Votre nom et prénom.." required>
 
       <label for="email">Email</label>
-      <input type="email" v-model="members.email" id="email" name="email" placeholder="Votre email .." required>
+      <input v-validate="'required|email'" type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
 
       <label for="password">Mot de passe</label>
       <input type="password" v-model="members.password" id="password" name="password" placeholder="Votre mot de passe.." required>
@@ -27,20 +32,27 @@
 
       <input type="submit" value="Submit">
     </form>
-</div>
+
   </div>
+    <hr/>
+    <div>
+      <p>Vous avez déjà un compte ? Vous pouvez vous connecter, en cliquant sur le lien suivant !</p>
+      <router-link class="btnCo" to="signin">Sign In</router-link>
+    </div>
+</div>
+
 </template>
 
 <script>
-  //import confApi from '../configApi'
+  import confApi from '../configApi'
   import router from '../router'
 
   export default {
-    name: 'Signin',
+    name: 'signup',
     data () {
       return {
         members:{fullname:'',
-          email: '',
+          mail: '',
           password:''
         },
         confirmPassword: ''
@@ -49,23 +61,22 @@
     },
 
     methods: {
-     /* signup(){
-        if(this.members.password === confirmPassword){
-          confApi.post('/members', this.members).then((response)=> {
-            confApi.post('/members/signin', this.members).then((response)=> {
-              sessionStorage.setItem("isConnected", "Connect")
-              sessionStorage.setItem("token", response.data.token)
-              sessionStorage.setItem("id", response.data._id)
-              router.push("PageCo")
-            })
-          }).catch((error)=> {
-            if(error.response.status === 422){
-              alert("Votre email est déjà utilisé.");
-            }
+      signup() {
+        if (this.members.password === this.confirmPassword) {
+          confApi.post('/signup', this.members).then((response) => {
+            alert('Vous etes inscrit ! Veuillez vous connecter.')
+            router.push("signin")
+          }).catch((error) => {
+
+              alert(error.response.data);
+
           })
+
+        } else {
+          alert('Veuillez verifier votre mot de passe. Ils ne sont pas identiques.')
         }
+
       }
-      */
     }
   }
 </script>
@@ -128,5 +139,18 @@
   .bloc{
     background-color: #f2f2f2;
 
+  }
+  .img{
+    background-color: cornflowerblue;
+    align-items: flex-start;
+  }
+  .jumbotron{
+    display: flex;
+    flex-direction: row;
+  }
+  .descGeoquizz{
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
   }
 </style>
