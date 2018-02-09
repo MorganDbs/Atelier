@@ -4,6 +4,8 @@ import signin from '@/components/Signin'
 import signup from '@/components/Signup'
 import home from '@/components/Home'
 import createSerie from '@/components/CreateSerie'
+import series from '@/components/Series/Index.vue'
+import edit from '@/components/Series/Edit.vue'
 
 Vue.use(Router)
 
@@ -25,6 +27,16 @@ const router =  new Router({
       component: createSerie
     },
     {
+      path: '/series',
+      name: 'series',
+      component: series,
+    },
+    {
+          path: '/:serie_id',
+          name: 'edit',
+          component: edit
+    },
+    {
       path: '/',
       name: 'home',
       component: home
@@ -36,7 +48,7 @@ const router =  new Router({
 // Les middlewares
 router.beforeEach((to, from, next) => {
 
-  if (to.name == 'createSerie' && sessionStorage.getItem("isConnected") != "Connect") {
+  if (to.name == 'createSerie' && to.name == 'edit' && to.name == 'series' && sessionStorage.getItem("isConnected") != "Connect") {
 
     next({name: 'signin' })
   }
