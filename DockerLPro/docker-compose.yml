@@ -1,0 +1,33 @@
+version : '3.4'
+services:  
+  wildfly:
+    image: "lpro/wildfly-admin"
+    ports: 
+      - "8080:8080"
+      - "9990:9990"
+    networks:
+      - lpronet
+    container_name: wildflyProd
+    volumes:
+      - ./deployments/:/opt/jboss/wildfly/standalone/deployments/:consistent
+    depends_on:
+      - db
+  
+  db:
+    ports:
+      - "5432:5432"
+    networks:
+      - lpronet
+    environment:
+      POSTGRES_DB: atelier
+      POSTGRES_USER: td1
+      POSTGRES_PASSWORD: td1-docker
+    container_name: db
+    image: "lpro/pg11"
+
+volumes:
+  deployments:
+
+networks:
+  lpronet:
+    driver: bridge
