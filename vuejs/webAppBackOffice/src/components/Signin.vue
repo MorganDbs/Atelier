@@ -47,10 +47,10 @@ export default {
     signin(){
       console.log(this.members)
       configApi.post('/signin', this.members).then((response)=> {
-console.log(response.data)
+console.log('hello'+response.data)
         sessionStorage.setItem("isConnected", "Connect")
         sessionStorage.setItem("token", response.data.token)
-        sessionStorage.setItem("nom",this.members.mail)
+        sessionStorage.setItem("nom",response.data.fullname)
         router.push({name:"createSerie"})
       }).catch((error) => {
 
