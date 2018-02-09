@@ -128,12 +128,12 @@ public class SerieRessource {
         if(!jsonSerie.containsKey("name") || jsonSerie.isNull("name") || jsonSerie.getString("name").isEmpty()){
             errorsList += "Il faut renseigner un nom de série. ";
             flag_errors = true;
-        }else if(!Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("name"))){
+        }else if(!Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("name"))){
             errorsList += "Il faut respecter la casse du nom de série. ";
             flag_errors = true;
         }
 
-        if(jsonSerie.containsKey("description") && Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("description"))){
+        if(jsonSerie.containsKey("description") && Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("description"))){
 
         }else{
             errorsList += "Il faut respecter la casse de la description. ";
@@ -143,7 +143,7 @@ public class SerieRessource {
         if(!jsonSerie.containsKey("city") || jsonSerie.isNull("city") || jsonSerie.getString("city").isEmpty()){
             errorsList += "Il faut renseigner une ville. ";
             flag_errors = true;
-        }else if(!Pattern.matches("^[a-zA-Z]+(?:[\\s-][a-zA-Z]+)*$", jsonSerie.getString("city"))){
+        }else if(!Pattern.matches("([a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\\s-]+)", jsonSerie.getString("city"))){
             errorsList += "Il faut respecter la casse du nom de city. ";
             flag_errors = true;
         }
