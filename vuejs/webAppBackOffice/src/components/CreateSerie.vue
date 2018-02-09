@@ -10,7 +10,7 @@
           <div class="descGeoquizz">
             <h1 class="display-4">Geo Quizz</h1>
             <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
-            <p class="lead">C'est partie !</p>
+            <p class="lead">C'est partie !</p><h5 v-html="userMail"></h5>
           </div>
         </div><hr/>
 
@@ -69,6 +69,9 @@
 
       </div>
 
+      <div>
+
+      </div>
     </div>
 
 
@@ -93,9 +96,9 @@
   export default {
 
     name: 'createSerie',
-
     data (){
       return {
+        userMail:sessionStorage.getItem("nom"),
         markerIcon:markerIcon,
         markersToUpload:[],
         marker:{
