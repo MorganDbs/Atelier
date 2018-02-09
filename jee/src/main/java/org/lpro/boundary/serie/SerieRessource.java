@@ -102,7 +102,7 @@ public class SerieRessource {
     }
 
     @POST
-    //@Secured
+    @Secured
     @ApiOperation(value = "Crée une série", notes = "Crée une série à partir du JSON fourni")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
