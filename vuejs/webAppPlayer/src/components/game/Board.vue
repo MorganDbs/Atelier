@@ -1,33 +1,30 @@
 <template>
 	<div class="wrapper">
-		<b-button @click="showModal" variant="info">
-			<b-img :src="pictures[0].picture" fluid-grow class="my-3"></b-img>
+		<b-button @click="showModal" variant="info" class="smallPicture">
+			<b-img :src="pictures[pictureIndex].picture" class="my-3"></b-img>
 		</b-button>
-		<b-modal ref="picture" hide-footer title="Image">
+		<b-modal ref="picture" size="lg" hide-footer title="Image">
 			<div class="d-block text-center">
 				<b-row class="justify-content-md-center">
 					<b-col lg="12">
-						<b-img :src="pictures[0].picture" fluid-grow></b-img>
+						<b-img :src="pictures[pictureIndex].picture" fluid></b-img>
 					</b-col>
 				</b-row>
 			</div>
 			<b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Fermer</b-btn>
-	    </b-modal>
+		</b-modal>
 		<v-map id="map" ref="serie" :zoom="difficulty.zoom" :min-zoom="difficulty.zoom" :max-zoom="difficulty.zoom" :center="serie.coords" v-on:l-click="addMarker">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-if="marker" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="pinIcon">
 			</v-marker>
-			<v-marker v-if="serie" v-for="picture in pictures" :key="picture.id" :lat-lng="picture.coords" :visible="true" :draggable="false" :icon="markerIcon">
-			</v-marker>
 		</v-map>
-		
+
 		<div class="board">
 			<div class="timer">
-				<span v-if="started" v-for="(m, k) in difficulty.multipliers" :key="m.id_multiplier">
-					<timer-circle class="circle-timer" v-if="multiplier == k" @timerFinished="timerFinished" :multiplier="m"></timer-circle>
-				</span>
-				<p v-if="endTime" class="circle-end-time">
-					Fin du temps !
+				<timer-circle ref="timerCircle" class="circle-timer" v-if="difficulty.multipliers && !endGame" @timerFinished="timerFinished" :multipliers="difficulty.multipliers" :multiplier="multiplierIndex"></timer-circle>
+
+				<p v-if="endGame" class="circle-end-time">
+					Fin du jeu !
 				</p>
 			</div>
 			<div class="score">
@@ -40,6 +37,7 @@
 
 <script>
 	import store from '@/store'
+	import router from '@/router'
 	import Vue2Leaflet from 'vue2-leaflet'
 	import { mapGetters, mapActions, mapMutations } from 'vuex'
 	import TimerCircle from '@/components/timer/TimerCircle'
@@ -70,9 +68,10 @@
 						color: '#FFC312'
 					}
 				},
-				multiplier: 0,
-				endTime: false,
-				started: false
+				endGame: false,
+				pictureIndex: 1,
+				multiplierIndex: 0,
+				score: 0
 			}
 		},
 		components: {
@@ -85,46 +84,80 @@
 		},
 		computed: {
 			...mapGetters(
-                {
-                    difficulty: 'geoquizz/getDifficulty',
-                    serie: 'geoquizz/getSerie',
-                    pictures: 'geoquizz/getPictures',
-                    score: 'geoquizz/getScore'
-                }
-            )
+				{
+					difficulty: 'geoquizz/getDifficulty',
+					serie: 'geoquizz/getSerie',
+					pictures: 'geoquizz/getPictures',
+					nickname: 'geoquizz/getNickname'
+				}
+			)
 		},
 		methods: {
 			addMarker(e) {
-				this.marker = { position: e.latlng }
-				let picture = this.pictures[0]
-				let distance = (e.latlng.distanceTo(picture.coords) / 1000).toFixed(2) // convert meter to kilometer
-				console.log(`${distance} km`)
-				// TODO : ajouter un timer et calculer les points selon le temps de réponse
-				// TODO : afficher le score et le timer sur l'interface
-				// TODO : afficher l'image sur l'interface
-				// TODO : Ajouter le zoom dans le retour de l'API sur les difficultés
-				// TODO : Afficher un message pour dire a quelle distance on le lieu a été place par rapport a lieu original
-				// TODO : Bouton suivant pour passer à l'image suivant ?
-				let a = this.difficulty.distances.find((e) => {
-					return distance < e.distance
-				})
-				console.log("---> " + a.points)
+				let pictures = (Object.keys(this.pictures).length - 1)
+
+				if (this.pictureIndex >= pictures) {
+					this.endGame = true
+					let message =  `Ta partie de jeu est terminée, néanmoins tu as obtenu un score de ${this.score} points.`
+					store.commit('FLASH/SET_FLASH', { 
+						message: message, 
+						variant: 'success' 
+					})
+					store.dispatch('geoquizz/sendScore')
+					router.push({ name: 'game_index'})
+				} else {
+					this.marker = { position: e.latlng }
+					let picture = this.pictures[0]
+					let distance = (e.latlng.distanceTo(picture.coords) / 1000).toFixed(2) // convert meter to kilometer
+					let distancesPoints = this.difficulty.distances.find((e) => {
+						return distance < e.distance
+					}).points
+
+					let multiplier = this.difficulty.multipliers[this.multiplierIndex].multiplier
+					
+					this.score = (this.score + (distancesPoints * multiplier))
+
+					store.commit('geoquizz/setScore', this.score)
+
+					this.pictureIndex = (this.pictureIndex + 1)
+					this.multiplierIndex = 0
+
+					// Redraw du circle-timer avec le nouveau temps
+					this.$refs.timerCircle.redraw(this.difficulty.multipliers[this.multiplierIndex].time)
+				}
 			},
-		    timerFinished(event) {
-		    	let multipliers = Object.keys(this.difficulty.multipliers).length
-		   		if (this.multiplier < multipliers && !this.endTime) {
-		   			this.multiplier = (this.multiplier + 1)
-		   		}
-		   		if (this.multiplier >= multipliers) {
-		   			this.endTime = true
-		   		}
-		    },
-		    showModal () {
+			timerFinished(event) {
+				let pictures = (Object.keys(this.pictures).length - 1)
+
+				if (this.pictureIndex >= pictures) {
+					this.endGame = true
+					let message =  `Ta partie de jeu est terminée, néanmoins tu as obtenu un score de ${this.score} points.`
+					store.commit('FLASH/SET_FLASH', { 
+						message: message, 
+						variant: 'success' 
+					})
+					store.dispatch('geoquizz/sendScore')
+					router.push({ name: 'game_index'})
+				} else {
+					let multipliers = Object.keys(this.difficulty.multipliers).length
+					if (this.multiplierIndex < multipliers && !this.endGame) {
+						this.multiplierIndex = (this.multiplierIndex + 1)
+
+						// Redraw du circle-timer avec le nouveau temps
+						this.$refs.timerCircle.redraw(this.difficulty.multipliers[this.multiplierIndex].time)
+					}
+					if (this.multiplierIndex >= multipliers) {
+						this.pictureIndex = (this.pictureIndex + 1)
+						this.multiplierIndex = 0
+					}
+				}
+			},
+			showModal () {
 				this.$refs.picture.show()
-		    },
-		    hideModal () {
+			},
+			hideModal () {
 				this.$refs.picture.hide()
-		    }
+			}
 		}
 	}
 
@@ -193,5 +226,16 @@
 		color: #FFC312;
 		font-size: 3em;
 		text-align: center;
+	}
+	.wrapper .smallPicture {
+		width: 200px;
+		position: absolute;
+		z-index: 99;
+		top: 100px;
+		left: 40px;
+		padding: 0px;
+	}
+	.wrapper .smallPicture img {
+		width: 170px;
 	}
 </style>

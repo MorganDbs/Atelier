@@ -23,8 +23,6 @@ export default {
 		},
 		setDifficulty: (state, difficulty) => {
 			state.game.difficulty = difficulty
-			Vue.set(state.game.difficulty, 'minZoom', difficulty.zoom)
-			Vue.set(state.game.difficulty, 'maxZoom', difficulty.zoom)
 		},
 		setToken: (state, token) => {
 			state.game.token = token
@@ -87,7 +85,7 @@ export default {
 		}
 	},
 	actions: {
-		sendGameInfo: ({commit}, data) => {			
+		sendGameInfo: ({commit}, data) => {	
 			api.post('/games', {
 				id_serie: data.serie.id,
 				id_difficulty: data.difficulty.id,
@@ -95,6 +93,16 @@ export default {
 			})
 			.then((response) => {
 				commit('setNickname', data.nickname)
+				data.difficulty.distances.sort((a, b) =>  {
+					return (a.id_distance > b.id_distance) ? 1 : (
+						(b.id_distance > a.id_distance) ? -1 : 0
+					);
+				});
+				data.difficulty.multipliers.sort((a, b) =>  {
+					return (a.id_multiplier > b.id_multiplier) ? 1 : (
+						(b.id_multiplier > a.id_multiplier) ? -1 : 0
+					);
+				});
 				commit('setDifficulty', data.difficulty)
 				commit('setSerie', response.data.serie)
 				commit('setPictures', response.data.serie.pictures)
@@ -119,8 +127,8 @@ export default {
 			})
 		},
 		sendScore: ({state}) => {
-			api.put('/games?token=' + state.token, {
-				score: state.game.score
+			api.put('/games?token=' + state.game.token, {
+				score: `${state.game.score}`
 			})
 			.then((response) => {
 
