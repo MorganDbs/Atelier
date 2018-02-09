@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+
     <div classe="header">
       <div class="jumbotron">
 
@@ -8,7 +9,7 @@
         </div>
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
-          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
           <p class="lead">C'est partie !</p>
         </div>
       </div>
@@ -17,8 +18,8 @@
     </div>
     <h1>Welcome</h1>
     <div class="formulaire">
-      <router-link class="btnCo" to="signin">SignIn</router-link>
-      <router-link class="btnCo" to="signup">SignUp</router-link>
+      <router-link class="btnCo" to="signin">Sign In</router-link>
+      <router-link class="btnCo" to="signup">Sign Up</router-link>
     </div>
   </div>
 </template>
@@ -49,6 +50,9 @@
   a {
     color: #42b983;
   }
+  /*
+  En-tête du site, div, bouton et description
+  */
   .btnCo {
     width:50vw;
     background-color: #ADD8E6;
@@ -63,12 +67,6 @@
   .btnCo:hover {
     background-color: #ADD8E8;
   }
-
-  div {
-    border-radius: 5px;
-    background-color:white;
-    padding: 20px;
-  }
   .img{
     background-color: cornflowerblue;
     align-items: flex-start;
@@ -82,6 +80,9 @@
     display: flex;
     flex-direction: column;
   }
+  /*
+  Formulaire
+   */
   .formulaire{
     width: 100%;
     margin-top:2%;
@@ -90,5 +91,10 @@
     align-items: center;
 
     background-color: #f2f2f2;
+  }
+  div {
+    border-radius: 5px;
+    background-color:white;
+    padding: 20px;
   }
 </style>

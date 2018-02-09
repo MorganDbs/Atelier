@@ -9,7 +9,7 @@
           </div>
           <div class="descGeoquizz">
             <h1 class="display-4">Geo Quizz</h1>
-            <p class="lead text-left">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+            <p class="lead text-left">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
             <p class="lead">C'est partie !</p><h5 v-html="userMail"></h5>
           </div>
         </div><hr/>
@@ -17,7 +17,7 @@
       </div>
 
 
-      <div class="profLogout">
+      <div class="divSignOut">
         <button v-on:click="signOut()">Se deconnecter</button>
       </div>
     </div>
@@ -111,7 +111,9 @@
     name: 'createSerie',
     data (){
       return {
+        //mail de l'utilisateur
         userMail:sessionStorage.getItem("nom"),
+        //initialisation de marker
         markerIcon:markerIcon,
         markerIcon2:marker,
         markersToUpload:[],
@@ -122,7 +124,13 @@
             lng: ''
           },
         },
+        /*
+        tableau ou on retrouve les images ajoutées
+        */
         imagePresent:[],
+        /*
+        data correspondant à la création de serie
+        */
         serie: {
           serie:{
             name: '',
@@ -134,12 +142,17 @@
             },
             pictures: []
           }
-
         },
+        /*
+        data correspondant au coordonnées de la carte de départ
+        */
         cityCoord:{
           lat:'48.692054',
           lng:'4.184417'
         },
+        /*
+        Data correspondant à l'ajout d'image
+         */
         image:[],
         file: [],
         name: [],
@@ -153,26 +166,24 @@
         sessionStorage.clear()
         alert("You're disconnect");
         router.push({name: 'home'})
-
-
       },
       togglePopup(marker){
-
+        //Ouvre le marker au click
         marker.target.togglePopup();
       },
       onMapClick(e){
         this.markersToUpload.push({coords: e.latlng})
-
       },
       addImage(fieldName, fileList,k,item){
-        this.imagePresent[k]=true;
-        let input = {"fieldName": fieldName, "fileList": fileList}
 
+        this.imagePresent[k]=true;
+
+        let input = {"fieldName": fieldName, "fileList": fileList}
         this.name.push(fileList)
         this.file.push(input);
-
         this.createImage(input.fileList[0],k)
 
+        //insertion des images dans la séries
         this.serie.serie.pictures.push(
           {
             "img":input.fileList[0].name,
@@ -223,14 +234,15 @@
       getGeoloc(){
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+this.serie.serie.city+`,+FR&key=AIzaSyCdIprtWN6lsubVYIiWCkQUGNEoLj_AxDo`)
           .then(response => {
-            // JSON responses are automatically parsed.
+            // Initialisation des coordonnées de la map
             this.cityCoord.lat=response.data.results[0].geometry.location.lat;
             this.cityCoord.lng=response.data.results[0].geometry.location.lng;
+            // créattion du marker
             this.marker.visible=true;
             this.marker.coords.lat=response.data.results[0].geometry.location.lat;
             this.marker.coords.lng=response.data.results[0].geometry.location.lng;
 
-            //ajout dans la serie
+            //ajout du marker dans la serie
             this.serie.serie.coords.lat=response.data.results[0].geometry.location.lat.toString();
             this.serie.serie.coords.lng=response.data.results[0].geometry.location.lng.toString();
 
@@ -261,6 +273,9 @@
     display: inline-block;
     margin: 0 10px;
   }
+  /*
+  champs du formulaire
+   */
   input[type=file]{
     width:100%;
     background-color: #ADD8E6;
@@ -297,8 +312,10 @@
   input[type=submit]:hover {
     background-color:  #ADD8E8;
   }
-
-  .profLogout{
+/*
+div et bouton correspondant au bouton signOut
+ */
+  .divSignOut{
 
     display: flex;
     flex-direction: row;

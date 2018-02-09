@@ -8,7 +8,7 @@
         </div>
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
-          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
           <p class="lead">C'est partie !</p>
         </div>
       </div>
@@ -29,7 +29,7 @@
     </div>
     <hr/>
     <div>
-      <p>Vous n'avez pas de compte ? Allez vite, en créer un, en cliquant sur le lien suivant !</p>
+      <p>Vous n'avez pas de compte ? Allez vite en créer un, en cliquant sur le lien suivant !</p>
       <router-link class="btnCo" to="signup">Sign Up</router-link>
     </div>
   </div>
@@ -82,6 +82,9 @@
   a {
     color: #42b983;
   }
+  /*
+  Champs des inputs
+   */
   input[type=text], input[type=email], select {
     width: 100%;
     padding: 12px 20px;
@@ -115,7 +118,9 @@
   input[type=submit]:hover {
     background-color: #ADD8E8;
   }
-
+/*
+Formulaire
+ */
   div {
     border-radius: 5px;
     background-color: white;
@@ -125,6 +130,9 @@
     background-color: #f2f2f2;
 
   }
+  /*
+  En-tête du site
+   */
   .img{
     background-color: cornflowerblue;
     align-items: flex-start;
