@@ -108,14 +108,18 @@
 				} else {
 					this.marker = { position: e.latlng }
 					let picture = this.pictures[0]
-					let distance = (e.latlng.distanceTo(picture.coords) / 1000).toFixed(2) // convert meter to kilometer
-					let distancesPoints = this.difficulty.distances.find((e) => {
-						return distance < e.distance
-					}).points
+					let distance = e.latlng.distanceTo(picture.coords)
+					let distancesPoints = this.difficulty.distances.find((d) => {
+						return distance < d.distance
+					})
 
-					let multiplier = this.difficulty.multipliers[this.multiplierIndex].multiplier
+					if (distancesPoints === undefined) {
+						distancesPoints = this.difficulty.distances[Object.keys(this.difficulty.distances).length - 1]
+					}
+
+					let multiplier = this.difficulty.multipliers[this.multiplierIndex]
 					
-					this.score = (this.score + (distancesPoints * multiplier))
+					this.score = (this.score + (distancesPoints.points * multiplier.multiplier))
 
 					store.commit('geoquizz/setScore', this.score)
 
@@ -143,12 +147,13 @@
 					if (this.multiplierIndex < multipliers && !this.endGame) {
 						this.multiplierIndex = (this.multiplierIndex + 1)
 
+						if (this.multiplierIndex >= multipliers) {
+							this.pictureIndex = (this.pictureIndex + 1)
+							this.multiplierIndex = 0
+						}
+						
 						// Redraw du circle-timer avec le nouveau temps
 						this.$refs.timerCircle.redraw(this.difficulty.multipliers[this.multiplierIndex].time)
-					}
-					if (this.multiplierIndex >= multipliers) {
-						this.pictureIndex = (this.pictureIndex + 1)
-						this.multiplierIndex = 0
 					}
 				}
 			},

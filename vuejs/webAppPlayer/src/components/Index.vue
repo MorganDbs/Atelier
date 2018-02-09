@@ -1,8 +1,8 @@
 <template>
 	<div class="wrapper">
-		<v-map id="map" ref="map" :zoom="map.zoom" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" :center="map.position" :options="{zoomControl: false}">
+		<v-map id="map" ref="map" :zoom="map.zoom" :min-zoom="map.minZoom" :max-zoom="map.maxZoom" :center="position">
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-			<v-marker v-on:l-add="bindPopup" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="icon">
+			<v-marker v-on:l-add="bindPopup" :lat-lng="position" :visible="true" :draggable="false" :icon="icon">
 				<v-popup>
 					<center>
 						<h4>GeoQuizz</h4>
@@ -17,6 +17,8 @@
 
 <script>
 	import Vue2Leaflet from 'vue2-leaflet'
+	import store from '@/store'
+	import { mapGetters, mapActions } from 'vuex'
 
 	var markerIcon = L.icon({
 		iconUrl: 'static/images/leaflet/marker-icon.png',
@@ -34,17 +36,11 @@
 				map: {
 					minZoom: 13,
 					maxZoom: 13,
-					zoom: 13,
-					position : {
-						lat: 48.6884439, 
-						lng: 6.1764079
-					}
+					zoom: 13
 				},
-				marker: { 
-					position : {
-						lat: 48.6906765, 
-						lng: 6.1764079
-					}
+				position: {
+					lat: 48.6884439,
+					lng: 6.1764079
 				}
 			}
 		},
