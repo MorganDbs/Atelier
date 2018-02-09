@@ -9,14 +9,14 @@
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
           <p class="lead">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
-          <p class="lead">C'est partie !</p>
+          <p class="lead">C'est parti !</p>
         </div>
       </div>
       <hr/>
 
     </div>
     <div class="bloc">
-    <h1>GeoQuizz Sign up</h1>
+    <h1>Geo Quizz Sign up</h1>
     <form @submit.prevent="signup()">
       <label for="fname">Nom et prénom</label>
       <input v-validate="'required|email'" type="text" v-model="members.fullname" id="fname" name="firstname" placeholder="Votre nom et prénom.." required>
@@ -35,9 +35,9 @@
 
   </div>
     <hr/>
-    <div>
+    <div  class="text-center">
       <p>Vous avez déjà un compte ? Vous pouvez vous connecter, en cliquant sur le lien suivant !</p>
-      <router-link class="btnCo" to="signin">Sign In</router-link>
+      <router-link class="btnCo" to="signin">Connectez-vous</router-link>
     </div>
 </div>
 
@@ -68,7 +68,7 @@
             router.push("signin")
           }).catch((error) => {
 
-              alert(error.response.data);
+              alert("Nous n'avons pas réussi à vous inscrire, désolé !");
 
           })
 
@@ -124,7 +124,7 @@
     background-color: #ADD8E6;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 1% 24%;
     border: none;
     border-radius: 4px;
     cursor: pointer;

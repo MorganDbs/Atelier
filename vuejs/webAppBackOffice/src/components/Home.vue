@@ -10,16 +10,16 @@
         <div class="descGeoquizz">
           <h1 class="display-4">Geo Quizz</h1>
           <p class="lead">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
-          <p class="lead">C'est partie !</p>
+          <p class="lead">C'est parti !</p>
         </div>
       </div>
       <hr/>
 
     </div>
-    <h1>Welcome</h1>
+    <h1 class="text-center">Welcome</h1>
     <div class="formulaire">
-      <router-link class="btnCo" to="signin">Sign In</router-link>
-      <router-link class="btnCo" to="signup">Sign Up</router-link>
+      <router-link class="btnCo text-center" to="signin">Sign In</router-link>
+      <router-link class="btnCo text-center" to="signup">Sign Up</router-link>
     </div>
   </div>
 </template>

@@ -32,9 +32,9 @@ const router =  new Router({
       component: series,
     },
     {
-          path: '/:serie_id',
-          name: 'edit',
-          component: edit
+      path: '/:serie_id',
+      name: 'edit',
+      component: edit
     },
     {
       path: '/',
@@ -44,7 +44,7 @@ const router =  new Router({
 
   ]
 })
-
+/*
 // Les middlewares
 router.beforeEach((to, from, next) => {
 
@@ -61,5 +61,5 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-
+*/
 export default router

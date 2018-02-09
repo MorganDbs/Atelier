@@ -1,5 +1,8 @@
 <template>
   <div>
+    <navbar>
+    </navbar>
+
     <div class="hello">
       <div classe="header">
         <div class="jumbotron">
@@ -10,16 +13,13 @@
           <div class="descGeoquizz">
             <h1 class="display-4">Geo Quizz</h1>
             <p class="lead text-left">Le seul jeu qui te fera passer, de bons moments. Enfin, un moyen de mélanger deux de tes passions, la géographie et le jeu.</p>
-            <p class="lead">C'est partie !</p><h5 v-html="userMail"></h5>
+            <p class="lead">C'est parti !</p><h5 v-html="userMail"></h5>
           </div>
         </div><hr/>
 
       </div>
 
 
-      <div class="divSignOut">
-        <button v-on:click="signOut()">Se deconnecter</button>
-      </div>
     </div>
 
 
@@ -91,6 +91,8 @@
   import router from '../router'
   import Vue2leaflet from 'vue2-leaflet'
   import configApi from '../configApi'
+  import navbar from '@/components/UI/navbar'
+
 
   var marker = L.icon({
     iconUrl: 'static/images/marker.png',
@@ -109,6 +111,9 @@
   export default {
 
     name: 'createSerie',
+    components: {
+      navbar: navbar
+    },
     data (){
       return {
         //mail de l'utilisateur
@@ -164,7 +169,7 @@
 
       signOut(){
         sessionStorage.clear()
-        alert("You're disconnect");
+        alert("Vous êtes déconnecté !");
         router.push({name: 'home'})
       },
       togglePopup(marker){
@@ -248,7 +253,7 @@
 
           })
           .catch(e => {
-            alert(e)
+            alert("Désolé, nous n'avons pas réussi à récupérer les coordonnées de cette ville.")
           })
 
       }
@@ -312,9 +317,9 @@
   input[type=submit]:hover {
     background-color:  #ADD8E8;
   }
-/*
-div et bouton correspondant au bouton signOut
- */
+  /*
+  div et bouton correspondant au bouton signOut
+   */
   .divSignOut{
 
     display: flex;
@@ -323,7 +328,17 @@ div et bouton correspondant au bouton signOut
     align-items: center;
     justify-content: flex-end;
   }
-
+  .button {
+    margin-left: 2px;
+    background-color: #ADD8E6; /* blue */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
   button {
     margin-left: 2px;
     background-color: #ADD8E6; /* blue */
