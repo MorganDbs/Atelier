@@ -13,7 +13,7 @@
 - maven
 - docker, docker-compose
 
-## Installation - Linux
+## Installation - Linux, Mac
 Aller dans le dossier installation_linux, puis exécuter les commandes suivantes :
 
 - installer l'api java
