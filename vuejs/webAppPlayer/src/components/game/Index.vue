@@ -2,6 +2,7 @@
 	<b-container fluid>
 		<b-row class="justify-content-md-center">
 			<b-col lg="10" md="6" sm="12">
+				<flash-message class="mt-4" variant="success"></flash-message>
 				<h1 class="mt-4">GeoQuizz</h1>
 				<hr>
 				<b-card bg-variant="light" class="mb-3">
@@ -35,8 +36,13 @@
 							<b-card :img-src="serie.picture" :img-alt="serie.name" img-top>
 								<p class="card-text">
 									<h5>{{ serie.name }}</h5>
-									Ville : {{ serie.city }}<br />{{ serie.description }}
-									<b-button variant="primary" class="mt-4 btn-block" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
+									<p>Ville : {{ serie.city }}<br />{{ serie.description }}</p>
+									<center>
+											<b-button v-if="nickname && difficulty" variant="primary" class="mt-4" @click="sendGameInfo({serie, difficulty, nickname})">Jouer</b-button>
+											<router-link :to="{ name: 'score_board', params: { id: serie.id } }">
+												<b-button variant="success" class="mt-4">Classement</b-button>
+											</router-link>
+									</center>
 								</p>
 							</b-card>
 						</b-card-group>
