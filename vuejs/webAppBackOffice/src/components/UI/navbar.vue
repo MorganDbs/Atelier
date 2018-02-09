@@ -1,27 +1,19 @@
 <template>
-  <b-navbar toggleable="md" type="dark">
+  <b-navbar toggleable="md" type="dark" variant="info">
 
+  <b-navbar-brand><img src="../../assets/logoMonde.png" alt="Geoquizz" width="30px;"> Geoquizz</b-navbar-brand>
+  
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-
-  <b-navbar-brand>Geoquizz</b-navbar-brand>
 
   <b-collapse is-nav id="nav_collapse">
 
     <b-navbar-nav>
-      <b-nav-item>
-      <router-link :to="{ name: 'series'}">Séries</router-link>
-      </b-nav-item>
-      
-      <b-nav-item>
-      <router-link :to="{ name: 'createSerie'}">Créer une série</router-link>
-      </b-nav-item>
-
-      
+      <b-nav-item class="nav-item d-inline-block" @click="goToSeries()">Séries</b-nav-item>
+      <b-nav-item class="nav-item" @click="goToNewSerie()">Créer une série</b-nav-item>
     </b-navbar-nav>
 
-    <!-- Right aligned nav items -->
-    <b-navbar-nav class="ml-auto">
-      <b-button variant="link" v-on:click="signOut()">Se deconnecter</b-button>
+    <b-navbar-nav class="ml-auto d-inline-block">
+      <b-button variant="danger" @:click="signOut()">Se déconnecter</b-button>
     </b-navbar-nav>
 
   </b-collapse>
@@ -40,13 +32,17 @@ import router from '@/router'
       signOut(){
         sessionStorage.clear()
         router.push({name: 'home'})
+      },
+      goToSeries() {
+        router.push({name: 'series'})
+      },
+      goToNewSerie() {
+        router.push({name: 'createSerie'})
       }
     }
   }
 </script>
 
 <style>
-.navbar{
-  background-color: #ADD8E6!important;
-}
+  
 </style>

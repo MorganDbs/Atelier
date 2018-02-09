@@ -1,23 +1,25 @@
 <template>
 <div>
 	<navbar></navbar>
-	<b-jumbotron header="Geoquizz" lead="Liste des séries" >
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../../assets/logoMonde.png" alt="CO-OP">
-	</b-jumbotron>
+
 	<b-container>
+		<h1 class="mt-3">Liste des séries</h1>
+		<hr />
 		<b-row>
-			<b-card-group deck>
-				<b-card v-for="serie in series" :key="serie.id">
-				<h3>
+			<b-card-group deck class="mt-4">
+				<b-col lg="4" v-for="serie in series" :key="serie.id" class="mb-5">
+				<b-card class="text-center">
+					<h3>
 				{{serie.name}} <small> ({{serie.city}})</small>
 				</h3>
 			    <p class="card-text">
 			      {{serie.description}}
 			    </p>
 			    <div slot="footer">
-	                <router-link :to="{ name: 'edit', params: { serie_id: serie.id }}">Ajouter des images a cette serie</router-link>
-	            </div>   
+	                <router-link :to="{ name: 'edit', params: { serie_id: serie.id }}"><b-button variant="info">Ajouter des images</b-button></router-link>
+	            </div>
 			  </b-card>
+	            </b-col> 
 			</b-card-group>
 		</b-row>
 	</b-container>
@@ -52,6 +54,6 @@ export default{
     }
 </script>
 
-<style>	
+<style>
 
 </style>
