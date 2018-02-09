@@ -16,31 +16,19 @@
 
     </div>
     <h1>Welcome</h1>
-    <form @submit.prevent="signin()">
-      <input type="submit" value="SignIn">
-    </form>
 
-    <form @submit.prevent="signup()">
-      <input type="submit" value="SignUp">
-    </form>
+    <router-link class="btnCo" to="signin">SignIn</router-link>
+    <router-link class="btnCo" to="signup">SignUp</router-link>
 
   </div>
 </template>
 
 <script>
- // import confApi from '../configApi'
+ // import configApi from '../configApi'
   import router from '../router'
 
   export default {
-    name: 'Home',
-    methods: {
-      signin(){
-        router.push('Signin')
-      },
-      signup(){
-        router.push('Signup')
-      },
-    }
+    name: 'home',
   }
 
 </script>
@@ -61,27 +49,8 @@ li {
 a {
   color: #42b983;
 }
-input[type=text], select {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-input[type=password], select {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type=submit] {
-  width:50%;
+.btnCo {
+  width:50vw;
   background-color: #ADD8E6;
   color: white;
   padding: 14px 20px;
@@ -91,7 +60,7 @@ input[type=submit] {
   cursor: pointer;
 }
 
-input[type=submit]:hover {
+.btnCo:hover {
   background-color: #ADD8E8;
 }
 
