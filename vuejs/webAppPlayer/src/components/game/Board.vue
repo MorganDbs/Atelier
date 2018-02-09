@@ -143,12 +143,13 @@
 					if (this.multiplierIndex < multipliers && !this.endGame) {
 						this.multiplierIndex = (this.multiplierIndex + 1)
 
+						if (this.multiplierIndex >= multipliers) {
+							this.pictureIndex = (this.pictureIndex + 1)
+							this.multiplierIndex = 0
+						}
+						
 						// Redraw du circle-timer avec le nouveau temps
 						this.$refs.timerCircle.redraw(this.difficulty.multipliers[this.multiplierIndex].time)
-					}
-					if (this.multiplierIndex >= multipliers) {
-						this.pictureIndex = (this.pictureIndex + 1)
-						this.multiplierIndex = 0
 					}
 				}
 			},
