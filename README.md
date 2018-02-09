@@ -9,9 +9,9 @@
 - WILMOUTH Steven
 
 ## Prérequis
-- docker, docker-compose
-- maven
 - npm
+- maven
+- docker, docker-compose
 
 ## Installation - Linux
 Aller dans le dossier installation_linux, puis exécuter les commandes suivantes :
