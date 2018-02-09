@@ -1,21 +1,20 @@
 <template>
 <div>
 	<navbar></navbar>
-	<b-jumbotron header="Geoquizz" lead="Liste des séries" >
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../../assets/logoMonde.png" alt="CO-OP">
-	</b-jumbotron>
 
 	<b-container>
+    <h1 class="mt-3">Ajouter des images</h1>
+    <hr />
 		<b-row>
-			<b-col lg="12" sm="12" md="12">
+			<b-col lg="12" sm="12" md="12" class="mt-4">
 				<form v-on:submit.prevent="createSerie()">
-		            <h2>Choisissez les différents points de votre serie</h2>
-
 		            <v-map ref="map" id="map" :zoom=13 :center="[currentSerie.lat,currentSerie.lng]" v-on:l-click="onMapClick">
 		              <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 		              <v-marker :lat-lng="marker.coords" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
-		                <v-popup :height="40">
-		                  <p>Vous êtes ici !</p>
+		                <v-popup :height="40" class="text-center">
+		                  <p>Cliquez sur la carte pour choisir les diférents points de la série.</p>
+                      <hr />
+                      <p>Vous êtes ici !</p>
 		                </v-popup>
 		              </v-marker>
 
@@ -33,8 +32,7 @@
 		              </v-marker>
 		            </v-map>
 
-
-		          <input type="submit" value="Submit">
+		          <b-button variant="info" class="btn-block mt-2">Envoyer</b-button>
 		        </form>
 		    </b-col>
 		</b-row>
@@ -69,7 +67,7 @@
         markerIcon:markerIcon,
         markersToUpload:[],
         marker:{
-          visible:false,
+          visible:true,
           coords: {
             lat: '',
             lng: ''
@@ -162,6 +160,6 @@
 <style>
   #map{
     width: 100%;
-    height: 500px;
+    height: 65vh;
   }
 </style>
