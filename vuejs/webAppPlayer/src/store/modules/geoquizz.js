@@ -53,6 +53,16 @@ export default {
 		},
 		setScores: (state, scores) => {
 			state.scores = scores
+		},
+		resetGame: (state) => {
+			state.game = {
+				serie: null,
+				pictures: null,
+				difficulty: null,
+				nickname: null,
+				score: 0,
+				token: null
+			}
 		}
 	},
 	getters: {
@@ -126,12 +136,13 @@ export default {
 				console.log(error)
 			})
 		},
-		sendScore: ({state}) => {
-			api.put('/games?token=' + state.game.token, {
+		sendScore: ({commit, state}) => {
+			let token = state.game.token
+			api.put('/games?token=' + token, {
 				score: `${state.game.score}`
 			})
 			.then((response) => {
-
+				commit('resetGame')
 			})
 			.catch((error) => {
 				console.log(error)

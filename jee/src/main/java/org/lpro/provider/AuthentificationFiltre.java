@@ -26,13 +26,16 @@ public class AuthentificationFiltre implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         // Récupère le header HTTP à partir de la requête
+        
         String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+        authHeader = requestContext.getUriInfo().getQueryParameters().getFirst("token");
         // On vérifie que le header Authorization est présent et formatté correctement
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        System.out.println(authHeader);
+        if (authHeader == null) {
             throw new NotAuthorizedException("Probleme header autorisation");
         }
         // On extrait le token, et on vérifie qu'il est valide
-        String token = authHeader.substring("Bearer".length()).trim();
+        String token = authHeader;
 
         try {
             // Valide le token...

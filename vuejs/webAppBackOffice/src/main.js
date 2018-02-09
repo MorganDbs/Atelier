@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import interceptors from './plugins/Interceptors';
 import BootstrapVue from 'bootstrap-vue';
 import Vue2Leaflet from 'vue2-leaflet';
@@ -28,6 +29,7 @@ Vue.use(interceptors)
 new Vue({
   el: '#app',
   router,
+  store,
   interceptors,
   components: { App },
   template: '<App/>'
