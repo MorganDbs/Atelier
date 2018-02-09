@@ -8,6 +8,27 @@
 - MATMAT Myriam
 - WILMOUTH Steven
 
+## Prérequis
+
+
+## Installation - Linux
+Aller dans le dossier installation_linux, puis exécuter les commandes suivantes :
+
+- installer l'api java
+<pre>./installApi.sh</pre>
+
+- démarrer l'api java
+<pre>./startApi.sh</pre>
+
+- stopper l'api java
+<pre>./stopApi.sh</pre>
+
+- démarrer la partie back office
+<pre>./startBackOffice.sh</pre>
+
+- démarrer la partie player
+<pre>./startPlayer.sh</pre>
+
 ## Configurations
 > Configurer l'application joueur
 - Modification du lien vers l'API JEE
