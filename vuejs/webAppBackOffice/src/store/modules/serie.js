@@ -6,7 +6,8 @@ export default {
     namespaced: true,
     state: {
         series: null,
-        current_serie: null
+        current_serie: null,
+        city_new_serie_coords: {lat: "48.692054", lng: "6.184417"}
     },
     mutations: {
         initiateSeries: (state, data) => {
@@ -19,6 +20,9 @@ export default {
             router.push({
                 name: "series"
             })
+        },
+        geolocInput: (state, data) =>{
+            state.city_new_serie_coords = data.results[0].geometry.location
         }
     },
     getters: {
@@ -27,6 +31,9 @@ export default {
         },
         getCurrentSerie: (state) => {
             return state.current_serie
+        },
+        getGeolocInput: (state) =>{
+            return state.city_new_serie_coords
         }
     },
     actions: {
@@ -50,6 +57,30 @@ export default {
             }).catch(error =>{
                     console.log(error)
             })      
+        },
+        createSerie({ commit, state }, data) {
+            console.log(state.city_new_serie_coords.lat)
+            console.log("48.55")
+            data.json.serie.coords.lat = state.city_new_serie_coords.lat.toString()
+            data.json.serie.coords.lng = state.city_new_serie_coords.lng.toString()
+            api.post('series/', data.json, {headers: { 'content-type': 'application/json' }}).then(response => {
+                   api.post('series/'+response.data+'/upload', data.img, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
+                        commit('uploadSerie', response.data)
+                    }).catch(error =>{
+                        console.log(error)
+                    })
+            }).catch(error =>{
+                    console.log(error)
+            })      
+        },
+        geolocInput({commit}, city){
+            api.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+city+`,+FR&key=AIzaSyCdIprtWN6lsubVYIiWCkQUGNEoLj_AxDo`)
+              .then(response => {
+                commit('geolocInput', response.data)
+              })
+              .catch(e => {
+                console.log(e)
+              })
         }
     }
 }

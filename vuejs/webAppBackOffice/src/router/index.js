@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import signin from '@/components/Signin'
-import signup from '@/components/Signup'
-import home from '@/components/Home'
-import createSerie from '@/components/CreateSerie'
+import signin from '@/components/Account/Signin'
+import signup from '@/components/Account/Signup'
+import createSerie from '@/components/Series/CreateSerie'
 import series from '@/components/Series/Index.vue'
 import edit from '@/components/Series/Edit.vue'
+import store from '@/store/index'
 
 Vue.use(Router)
 
@@ -32,34 +32,24 @@ const router =  new Router({
       component: series,
     },
     {
-          path: '/:serie_id',
-          name: 'edit',
-          component: edit
-    },
-    {
-      path: '/',
-      name: 'home',
-      component: home
+      path: '/:serie_id',
+      name: 'edit',
+      component: edit
     }
-
   ]
 })
 
-// Les middlewares
 router.beforeEach((to, from, next) => {
-
-  if (to.name == 'createSerie' && to.name == 'edit' && to.name == 'series' && sessionStorage.getItem("isConnected") != "Connect") {
-
-    next({name: 'signin' })
-  }
-  else if (to.name == 'signin' && sessionStorage.getItem("isConnected") == "Connect" ){
-
-    next({name: 'createSerie' })
-  }
-  else{
-    next()
-  }
-})
+    if(to.name != 'signin' && to.name != 'signup' && ! store.getters['account/isConnected']) {
+      next({name: 'signin'})
+    }
+    else if(to.name == 'signin' && store.getters['account/isConnected']) {
+      next({name: 'home'})
+    }
+    else {
+      next()
+    }
+  })
 
 
 export default router
