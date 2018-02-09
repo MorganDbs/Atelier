@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '@/store'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import GameIndex from '@/components/game/Index'
@@ -7,7 +8,7 @@ import ScoreBoard from '@/components/score/Index'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
 	routes: [
 	{
 		path: '/',
@@ -31,3 +32,12 @@ export default new Router({
 	}
 	]
 })
+
+router.beforeEach((to, from, next) => {
+	if (to.name === 'game_board' && !store.getters['geoquizz/getToken']) {
+		next({ name: 'game_index' })
+	} else {
+		next()
+	}
+})
+export default router
