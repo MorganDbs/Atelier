@@ -434,6 +434,8 @@ public class SerieRessource {
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
+                    .add("lat", serie.getLat())
+                    .add("lng", serie.getLng())
                     .build();
     }
     

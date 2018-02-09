@@ -48,7 +48,7 @@ const router =  new Router({
 // Les middlewares
 router.beforeEach((to, from, next) => {
 
-  if (to.name == 'createSerie' && sessionStorage.getItem("isConnected") != "Connect") {
+  if (to.name == 'createSerie' && to.name == 'edit' && to.name == 'series' && sessionStorage.getItem("isConnected") != "Connect") {
 
     next({name: 'signin' })
   }

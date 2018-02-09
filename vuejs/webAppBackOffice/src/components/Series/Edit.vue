@@ -7,15 +7,11 @@
 
 	<b-container>
 		<b-row>
-			<div id="app">
-
-		      <div class="formulaire">
-		          
-
-		          <div class="divMap">
+			<b-col lg="12" sm="12" md="12">
+				<form v-on:submit.prevent="createSerie()">
 		            <h2>Choisissez les différents points de votre serie</h2>
 
-		            <v-map ref="map" id="map" :zoom=13 :center="[cityCoord.lat,cityCoord.lng]" v-on:l-click="onMapClick">
+		            <v-map ref="map" id="map" :zoom=13 :center="[currentSerie.lat,currentSerie.lng]" v-on:l-click="onMapClick">
 		              <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 		              <v-marker :lat-lng="marker.coords" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
 		                <v-popup :height="40">
@@ -37,14 +33,10 @@
 		              </v-marker>
 		            </v-map>
 
-		          </div>
 
 		          <input type="submit" value="Submit">
 		        </form>
-
-		      </div>
-
-		    </div>
+		    </b-col>
 		</b-row>
 	</b-container>
 </div>
@@ -84,22 +76,8 @@
           },
         },
         imagePresent:[],
-        serie: {
-          serie:{
-            name: '',
-            description: '',
-            city: '',
-            coords: {
-              lat: '',
-              lng: ''
-            },
-            pictures: []
-          }
-
-        },
-        cityCoord:{
-          lat:'48.692054',
-          lng:'4.184417'
+        picturesTab: {
+        	"pictures" :[]
         },
         image:[],
         file: [],
@@ -108,32 +86,28 @@
 
     },
     created: () => {
-      store.dispatch('serie/currentSerie', router.history.current.params.serie_id)
+        store.dispatch('serie/currentSerie', router.history.current.params.serie_id)
     },
     methods: {
-    	togglePopup(marker){
+    togglePopup(marker){
 
         marker.target.togglePopup();
       },
       onMapClick(e){
-        console.log( e.latlng)
         this.markersToUpload.push({coords: e.latlng})
 
       },
       addImage(fieldName, fileList,k,item){
         this.imagePresent[k]=true;
-        console.log(item)
         let input = {"fieldName": fieldName, "fileList": fileList}
 
         this.name.push(fileList)
         this.file.push(input);
-        console.log("1")
 
 
         this.createImage(input.fileList[0],k)
-        console.log(this.serie.serie.pictures)
 
-        this.serie.serie.pictures.push(
+        this.picturesTab.pictures.push(
           {
             "img":input.fileList[0].name,
             "coords":
@@ -144,12 +118,8 @@
           }
         )
 
-
-        console.log(this.serie.serie.pictures);
-
       },
       createSerie(){
-        console.log("2")
 
         const formData = new FormData();
 
@@ -161,20 +131,9 @@
             });
 
         })
-        console.log(this.serie)
-        this.serie.serie.pictures=JSON.parse(JSON.stringify(this.serie.serie.pictures))
-        console.log("helloo")
-        console.log(this.serie.serie.pictures)
-        configApi.post('series', this.serie, {headers: { 'content-type': 'application/json' }}).then(response => {
-          console.log(response.data);
-          configApi.post('series/'+response.data+'/upload', formData, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
-            console.log(response)
-          }).catch(error =>{
-            console.log(error)
-          })
-        }).catch(error =>{
-          console.log(error)
-        })
+        this.picturesTab=JSON.parse(JSON.stringify(this.picturesTab))
+
+        this.$store.dispatch('serie/addPictureToSerie', {"json": this.picturesTab, "img": formData})
       },
       createImage(file,k){
 
@@ -187,26 +146,6 @@
           vm.image[k] = e.target.result;
         };
         reader.readAsDataURL(file);
-
-      },
-      getGeoloc(){
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+this.serie.serie.city+`,+FR&key=AIzaSyCdIprtWN6lsubVYIiWCkQUGNEoLj_AxDo`)
-          .then(response => {
-            // JSON responses are automatically parsed.
-            this.cityCoord.lat=response.data.results[0].geometry.location.lat;
-            this.cityCoord.lng=response.data.results[0].geometry.location.lng;
-            this.marker.visible=true;
-            this.marker.coords.lat=response.data.results[0].geometry.location.lat;
-            this.marker.coords.lng=response.data.results[0].geometry.location.lng;
-
-            //ajout dans la serie
-            this.serie.serie.coords.lat=response.data.results[0].geometry.location.lat.toString();
-            this.serie.serie.coords.lng=response.data.results[0].geometry.location.lng.toString();
-
-          })
-          .catch(e => {
-            alert(e)
-          })
 
       }
     },
@@ -222,7 +161,7 @@
 
 <style>
   #map{
-    width: 55vw;
-    height: 70vh;
+    width: 100%;
+    height: 500px;
   }
 </style>
