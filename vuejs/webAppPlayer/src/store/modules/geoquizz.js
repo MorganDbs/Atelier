@@ -15,11 +15,7 @@ export default {
 			score: 0,
 			token: null
 		},
-		scores: null,
-		position: {
-			lat: 48.6884439,
-			lng: 6.1764079
-		}
+		scores: null
 	},
 	mutations: {
 		setNickname: (state, nickname) => {
@@ -67,10 +63,6 @@ export default {
 				score: 0,
 				token: null
 			}
-		},
-		setLatLng: (state, data) => {
-			state.position.lat = data.lat
-			state.position.lng = data.lon
 		}
 	},
 	getters: {
@@ -100,9 +92,6 @@ export default {
 		},
 		getScores: (state) => {
 			return state.scores
-		},
-		getLatLng: (state) => {
-			return state.position
 		}
 	},
 	actions: {
@@ -163,18 +152,6 @@ export default {
 			api.get(`/series/${serie_id}/games`)
 			.then((response) => {
 				commit('setScores', response.data.games)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-		},
-		getLatLng: ({commit}) => {
-			api({
-				url: 'http://ip-api.com/json',
-				method: 'GET'
-			})
-			.then((response) => {
-				commit('setLatLng', response.data)
 			})
 			.catch((error) => {
 				console.log(error)

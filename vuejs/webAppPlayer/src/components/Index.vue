@@ -37,6 +37,10 @@
 					minZoom: 13,
 					maxZoom: 13,
 					zoom: 13
+				},
+				position: {
+					lat: 48.6884439,
+					lng: 6.1764079
 				}
 			}
 		},
@@ -46,16 +50,6 @@
 			'v-marker': Vue2Leaflet.Marker,
 			'v-group': Vue2Leaflet.LayerGroup,
 			'v-popup': Vue2Leaflet.Popup
-		},
-		created() {
-			store.dispatch('geoquizz/getLatLng')
-		},
-		computed: {
-			...mapGetters(
-                {
-                    position: 'geoquizz/getLatLng'
-                }
-            )
 		},
 		methods: {
 			bindPopup(marker) {
