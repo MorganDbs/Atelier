@@ -142,7 +142,6 @@ export default {
 				score: `${state.game.score}`
 			})
 			.then((response) => {
-				console.log(response)
 				commit('resetGame')
 			})
 			.catch((error) => {
