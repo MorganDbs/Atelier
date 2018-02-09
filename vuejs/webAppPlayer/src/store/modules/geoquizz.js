@@ -14,7 +14,8 @@ export default {
 			nickname: null,
 			score: 0,
 			token: null
-		}
+		},
+		scores: null
 	},
 	mutations: {
 		setNickname: (state, nickname) => {
@@ -22,8 +23,6 @@ export default {
 		},
 		setDifficulty: (state, difficulty) => {
 			state.game.difficulty = difficulty
-			Vue.set(state.game.difficulty, 'minZoom', difficulty.zoom)
-			Vue.set(state.game.difficulty, 'maxZoom', difficulty.zoom)
 		},
 		setToken: (state, token) => {
 			state.game.token = token
@@ -51,6 +50,19 @@ export default {
 		},
 		setScore: (state, score) => {
 			state.game.score = score
+		},
+		setScores: (state, scores) => {
+			state.scores = scores
+		},
+		resetGame: (state) => {
+			state.game = {
+				serie: null,
+				pictures: null,
+				difficulty: null,
+				nickname: null,
+				score: 0,
+				token: null
+			}
 		}
 	},
 	getters: {
@@ -77,11 +89,13 @@ export default {
 		},
 		getScore: (state) => {
 			return state.game.score
+		},
+		getScores: (state) => {
+			return state.scores
 		}
-
 	},
 	actions: {
-		sendGameInfo: ({commit}, data) => {			
+		sendGameInfo: ({commit}, data) => {	
 			api.post('/games', {
 				id_serie: data.serie.id,
 				id_difficulty: data.difficulty.id,
@@ -89,6 +103,16 @@ export default {
 			})
 			.then((response) => {
 				commit('setNickname', data.nickname)
+				data.difficulty.distances.sort((a, b) =>  {
+					return (a.id_distance > b.id_distance) ? 1 : (
+						(b.id_distance > a.id_distance) ? -1 : 0
+					);
+				});
+				data.difficulty.multipliers.sort((a, b) =>  {
+					return (a.id_multiplier > b.id_multiplier) ? 1 : (
+						(b.id_multiplier > a.id_multiplier) ? -1 : 0
+					);
+				});
 				commit('setDifficulty', data.difficulty)
 				commit('setSerie', response.data.serie)
 				commit('setPictures', response.data.serie.pictures)
@@ -112,12 +136,23 @@ export default {
 				console.log(error)
 			})
 		},
-		sendScore: ({state}) => {
-			api.put('/games?token=' + state.token, {
-				score: state.game.score
+		sendScore: ({commit, state}) => {
+			let token = state.game.token
+			api.put('/games?token=' + token, {
+				score: `${state.game.score}`
 			})
 			.then((response) => {
-
+				console.log(response)
+				commit('resetGame')
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+		},
+		getScores: ({commit}, serie_id) => {
+			api.get(`/series/${serie_id}/games`)
+			.then((response) => {
+				commit('setScores', response.data.games)
 			})
 			.catch((error) => {
 				console.log(error)

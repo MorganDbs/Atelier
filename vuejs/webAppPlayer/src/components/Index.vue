@@ -4,7 +4,9 @@
 			<v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
 			<v-marker v-on:l-add="bindPopup" :lat-lng="marker.position" :visible="true" :draggable="false" :icon="icon">
 				<v-popup>
-					<h4>GeoQuizz</h4>
+					<center>
+						<h4>GeoQuizz</h4>
+					</center>
 					<p>Un jeu amusant où tu dois positionner une photo sur la carte de ta ville sans te tromper et plus vite que les autres !</p>
 					<router-link :to="{name: 'game_index'}" class="btn btn-success btn-block">Jouer</router-link>
 				</v-popup>
@@ -73,7 +75,7 @@
 	.leaflet-container a {
 		color: #fff;
 	}
-	.leaflet-popup-close-button {
+	.leaflet-popup-close-button, .leaflet-control-container {
 		display: none;
 	}
 </style>

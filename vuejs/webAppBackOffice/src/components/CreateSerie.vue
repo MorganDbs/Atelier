@@ -9,8 +9,8 @@
           </div>
           <div class="descGeoquizz">
             <h1 class="display-4">Geo Quizz</h1>
-            <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
-            <p class="lead">C'est partie !</p>
+            <p class="lead text-left">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+            <p class="lead">C'est partie !</p><h5 v-html="userMail"></h5>
           </div>
         </div><hr/>
 
@@ -22,11 +22,15 @@
       </div>
     </div>
 
-    <div id="app">
 
-      <div class="formulaire">
-        <h1>Créer une serie</h1>
-        <form @submit.prevent="createSerie()">
+
+    <div>
+
+
+      <form id="app" @submit.prevent="createSerie()">
+
+        <div class="formulaire">
+          <h1>Créer une serie</h1>
           <label for="name">Nom de la série</label>
           <input type="text" v-model="serie.serie.name" id="name" name="name" placeholder="Le nom de la serie " required>
 
@@ -37,39 +41,45 @@
           <input @change="getGeoloc" type="text" v-model="serie.serie.city" id="city" name="city" placeholder="Votre ville" required>
 
 
-          <input type="submit" value="Submit">
+          <input type="submit" value="Créer">
+          <p class="text-left">Avant de valider la création de votre série, n'oubliez pas de choisir les différents points de votre série. Il vous faudra choisir au minimun 10 images.</p>
 
-          <div class="divMap">
-            <h2>Choisissez les différents points de votre serie</h2>
+        </div>
 
-            <v-map ref="map" id="map" :zoom=13 :center="[cityCoord.lat,cityCoord.lng]" v-on:l-click="onMapClick">
-              <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-              <v-marker :lat-lng="marker.coords" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
-                <v-popup :height="40">
-                  <p>Vous êtes ici !</p>
-                </v-popup>
-              </v-marker>
+        <div class="divMap">
+          <h1 style="margin-bottom: 2%;">Choisissez les différents points de votre serie</h1>
 
-              <v-marker :v-if="markersToUpload" :icon="markerIcon" v-for="item,k in markersToUpload" :key="k" v-on:l-add="togglePopup" :lat-lng="item.coords">
+          <v-map ref="map" id="map" :zoom=13 :center="[cityCoord.lat,cityCoord.lng]" v-on:l-click="onMapClick">
+            <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+            <v-marker :lat-lng="marker.coords" :icon="markerIcon2" :visible="marker.visible" v-on:l-add="togglePopup">
+              <v-popup :height="40">
+                <p>Vous êtes ici !</p>
+              </v-popup>
+            </v-marker>
 
-                <v-popup >
-                  <p>Selectionner une image qui correspondra au point sur la carte</p>
-                  <div v-if="!imagePresent[k]">
-                    <input name="file" type="file" :key="k" @change="addImage($event.target.name, $event.target.files,k, item)" required>
-                  </div>
-                  <div v-else>
-                    <img class="imageUpload" :src="image[k]" />
-                  </div>
-                </v-popup>
-              </v-marker>
-            </v-map>
+            <v-marker :v-if="markersToUpload" :icon="markerIcon" v-for="item,k in markersToUpload" :key="k" v-on:l-add="togglePopup" :lat-lng="item.coords">
 
-          </div>
-        </form>
+              <v-popup >
+                <p>Selectionner une image qui correspondra au point sur la carte</p>
+                <div v-if="!imagePresent[k]">
+                  <input name="file" type="file" :key="k" @change="addImage($event.target.name, $event.target.files,k, item)" required>
+                </div>
+                <div v-else>
+                  <img class="imageUpload" :src="image[k]" />
+                </div>
+              </v-popup>
+            </v-marker>
+          </v-map>
 
-      </div>
+        </div>
+      </form>
 
     </div>
+
+    <div>
+
+    </div>
+
 
 
 
@@ -82,21 +92,28 @@
   import Vue2leaflet from 'vue2-leaflet'
   import configApi from '../configApi'
 
-  var markerIcon = L.icon({
+  var marker = L.icon({
     iconUrl: 'static/images/marker.png',
+    shadowUrl: 'static/images/marker-shadow.png',
+    iconSize:     [35, 41],
+    iconAnchor:   [25, 41],
+    popupAnchor:  [-12.5, -40]
+  })
+  var markerIcon = L.icon({
+    iconUrl: 'static/images/marker-icon.png',
     shadowUrl: 'static/images/marker-shadow.png',
     iconSize:     [25, 41],
     iconAnchor:   [25, 41],
     popupAnchor:  [-12.5, -40]
   })
-
   export default {
 
     name: 'createSerie',
-
     data (){
       return {
+        userMail:sessionStorage.getItem("nom"),
         markerIcon:markerIcon,
+        markerIcon2:marker,
         markersToUpload:[],
         marker:{
           visible:false,
@@ -144,22 +161,17 @@
         marker.target.togglePopup();
       },
       onMapClick(e){
-        console.log( e.latlng)
         this.markersToUpload.push({coords: e.latlng})
 
       },
       addImage(fieldName, fileList,k,item){
         this.imagePresent[k]=true;
-        console.log(item)
         let input = {"fieldName": fieldName, "fileList": fileList}
 
         this.name.push(fileList)
         this.file.push(input);
-        console.log("1")
-
 
         this.createImage(input.fileList[0],k)
-        console.log(this.serie.serie.pictures)
 
         this.serie.serie.pictures.push(
           {
@@ -172,12 +184,8 @@
           }
         )
 
-
-        console.log(this.serie.serie.pictures);
-
       },
       createSerie(){
-        console.log("2")
 
         const formData = new FormData();
 
@@ -189,14 +197,9 @@
             });
 
         })
-        console.log(this.serie)
         this.serie.serie.pictures=JSON.parse(JSON.stringify(this.serie.serie.pictures))
-        console.log("helloo")
-        console.log(this.serie.serie.pictures)
         configApi.post('series', this.serie, {headers: { 'content-type': 'application/json' }}).then(response => {
-          console.log(response.data);
           configApi.post('series/'+response.data+'/upload', formData, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
-            console.log(response)
           }).catch(error =>{
             console.log(error)
           })
@@ -271,12 +274,21 @@
   input[type=file]:hover {
     background-color:  #ADD8E8;
   }
+  input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
   input[type=submit] {
     width:50%;
     background-color: #ADD8E6;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 2% 24%;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -322,20 +334,9 @@
     padding: 20px;
   }
 
-  .home{
-    display: flex;
-    background-color: 	#b3ffb3;
 
-  }
 
-  .channels{
-    width : 100%;
-  }
 
-  .members{
-    width :200px;
-    background-color:	#b3ffb3;
-  }
   .img{
     background-color: cornflowerblue;
     align-items: flex-start;
@@ -353,12 +354,14 @@
   #app{
     display: flex;
     flex-direction: row;
+
   }
   .formulaire{
     width: 40vw;
     margin-top:2%;
     display:flex;
     flex-direction: column;
+    background-color: #f2f2f2;
   }
   .imageUpload{
     width: 100px;
