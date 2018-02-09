@@ -10,9 +10,15 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "bootstrap": "^4.0.0",
+    "bootstrap-vue": "^2.0.0-rc.1",
+    "vee-validate": "^2.0.3",
     "vue": "^2.5.2",
-    "vue2-leaflet": "0.0.58"
+    "vue-router": "^3.0.1",
+    "vue2-leaflet": "0.0.58",
+    "vuex": "^3.0.1",
+    "vuex-persistedstate": "^2.4.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

@@ -80,6 +80,27 @@ public class SerieRessource {
     }
     
     @GET
+    @Path("{id}")
+    @ApiOperation(value = "Récupère une serie", notes = "Renvoie le JSON associé à une serie")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 417, message = "Expectation Failed"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    public Response getSerie(@PathParam("id") String id, @Context UriInfo uriInfo) {
+        Serie s = this.sm.findById(id);
+        
+        if(s == null){
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    Json.createObjectBuilder()
+                            .add("error", "Pas de série pour cette id")
+                            .build()
+            ).build();
+        }
+        
+        return Response.status(Response.Status.OK).entity(buildJsonOneSerie(s)).build();
+    }
+    
+    @GET
     @Path("{id}/games")
     @ApiOperation(value = "Récupère toutes les games d'une série", notes = "Renvoie le JSON associé à la collection de games d'une série")
     @ApiResponses(value = {
@@ -184,7 +205,7 @@ public class SerieRessource {
         }else{
             pictures = jsonSerie.getJsonArray("pictures");
             System.out.println("taille: " + pictures.size());
-            if(pictures.size() < 2){
+            if(pictures.size() < 10){
                 errorsList += "Il faut renseigner encore "+ (10-pictures.size())  +" images. ";
                 flag_errors_pictures = true;
             }else{
@@ -406,6 +427,16 @@ public class SerieRessource {
                 .add("games", games)
                 .build();
     }
+    
+    private JsonObject buildJsonOneSerie(Serie serie){
+        return Json.createObjectBuilder()
+                    .add("id", serie.getId())
+                    .add("name", serie.getName())
+                    .add("city", serie.getCity())
+                    .add("description", serie.getDescription())
+                    .build();
+    }
+    
     private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
 

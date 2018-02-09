@@ -1,20 +1,25 @@
 <template>
   <div class="hello">
     <div classe="header">
-      <div class="jumbotron jumbotron-fluid">
-          <div classe="img">
-            <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="CO-OP">
-          </div>
-          <h1 class="display-4">Fluid jumbotron</h1>
-          <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+      <div class="jumbotron">
+
+        <div classe="img">
+          <img style="background-color:#ADD8E6; border-radius: 2% 2%;" src="../assets/logoMonde.png" alt="GeoQuizz">
+        </div>
+        <div class="descGeoquizz">
+          <h1 class="display-4">Geo Quizz</h1>
+          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">C'est partie !</p>
+        </div>
       </div>
+      <hr/>
 
     </div>
  <div class="bloc">
     <h1>GeoQuizz Sign in</h1>
       <form @submit.prevent="signin()">
       <label for="email">Email</label>
-      <input type="email" v-model="members.email" id="email" name="email" placeholder="Votre email .." required>
+      <input v-validate="'required|email'" type="email" v-model="members.mail" id="email" name="email" placeholder="Votre email .." required>
 
       <label for="password">Password</label>
       <input type="password" v-model="members.password" id="password" name="password" placeholder="Votre mot de passe.." required>
@@ -26,28 +31,34 @@
 </template>
 
 <script>
-  //import confApi from '../configApi'
+  import configApi from '../configApi'
   import router from '../router'
 export default {
-  name: 'Signin',
+  name: 'signin',
   data () {
     return {
-      members:{email: '',
+      members:{mail: '',
         password:''
       }
 
     }
   },
   methods: {
-    /*signin(){
-      confApi.post('/members/signin', this.members).then((response)=> {
+    signin(){
+      console.log(this.members)
+      configApi.post('/signin', this.members).then((response)=> {
+
         sessionStorage.setItem("isConnected", "Connect")
         sessionStorage.setItem("token", response.data.token)
-        sessionStorage.setItem("id", response.data._id)
-        router.push("PageCo")
+        sessionStorage.setItem("id", response.data.id_users)
+        router.push({name:"createSerie"})
+      }).catch((error) => {
+
+        alert(error);
+
       })
     }
-    */
+
   }
 }
 </script>
@@ -110,5 +121,18 @@ div {
 .bloc{
   background-color: #f2f2f2;
 
+}
+.img{
+  background-color: cornflowerblue;
+  align-items: flex-start;
+}
+.jumbotron{
+  display: flex;
+  flex-direction: row;
+}
+.descGeoquizz{
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
 }
 </style>
