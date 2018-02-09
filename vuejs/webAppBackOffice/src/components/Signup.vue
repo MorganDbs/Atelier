@@ -34,6 +34,11 @@
     </form>
 
   </div>
+    <hr/>
+    <div>
+      <p>Vous avez déjà un compte ? Vous pouvez vous connecter, en cliquant sur le lien suivant !</p>
+      <router-link class="btnCo" to="signin">Sign In</router-link>
+    </div>
 </div>
 
 </template>

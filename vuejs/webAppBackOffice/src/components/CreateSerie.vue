@@ -42,7 +42,7 @@
 
 
           <input type="submit" value="Créer">
-          <p class="text-left">Avant de valider la création de votre série, n'oubliez pas de choisir les différents points de votre série.</p>
+          <p class="text-left">Avant de valider la création de votre série, n'oubliez pas de choisir les différents points de votre série. Il vous faudra choisir au minimun 10 images.</p>
 
         </div>
 
@@ -51,7 +51,7 @@
 
           <v-map ref="map" id="map" :zoom=13 :center="[cityCoord.lat,cityCoord.lng]" v-on:l-click="onMapClick">
             <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-            <v-marker :lat-lng="marker.coords" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
+            <v-marker :lat-lng="marker.coords" :icon="markerIcon2" :visible="marker.visible" v-on:l-add="togglePopup">
               <v-popup :height="40">
                 <p>Vous êtes ici !</p>
               </v-popup>
@@ -92,14 +92,20 @@
   import Vue2leaflet from 'vue2-leaflet'
   import configApi from '../configApi'
 
-  var markerIcon = L.icon({
+  var marker = L.icon({
     iconUrl: 'static/images/marker.png',
+    shadowUrl: 'static/images/marker-shadow.png',
+    iconSize:     [35, 41],
+    iconAnchor:   [25, 41],
+    popupAnchor:  [-12.5, -40]
+  })
+  var markerIcon = L.icon({
+    iconUrl: 'static/images/marker-icon.png',
     shadowUrl: 'static/images/marker-shadow.png',
     iconSize:     [25, 41],
     iconAnchor:   [25, 41],
     popupAnchor:  [-12.5, -40]
   })
-
   export default {
 
     name: 'createSerie',
@@ -107,6 +113,7 @@
       return {
         userMail:sessionStorage.getItem("nom"),
         markerIcon:markerIcon,
+        markerIcon2:marker,
         markersToUpload:[],
         marker:{
           visible:false,
@@ -154,22 +161,17 @@
         marker.target.togglePopup();
       },
       onMapClick(e){
-        console.log( e.latlng)
         this.markersToUpload.push({coords: e.latlng})
 
       },
       addImage(fieldName, fileList,k,item){
         this.imagePresent[k]=true;
-        console.log(item)
         let input = {"fieldName": fieldName, "fileList": fileList}
 
         this.name.push(fileList)
         this.file.push(input);
-        console.log("1")
-
 
         this.createImage(input.fileList[0],k)
-        console.log(this.serie.serie.pictures)
 
         this.serie.serie.pictures.push(
           {
@@ -182,12 +184,8 @@
           }
         )
 
-
-        console.log(this.serie.serie.pictures);
-
       },
       createSerie(){
-        console.log("2")
 
         const formData = new FormData();
 
@@ -199,14 +197,9 @@
             });
 
         })
-        console.log(this.serie)
         this.serie.serie.pictures=JSON.parse(JSON.stringify(this.serie.serie.pictures))
-        console.log("helloo")
-        console.log(this.serie.serie.pictures)
         configApi.post('series', this.serie, {headers: { 'content-type': 'application/json' }}).then(response => {
-          console.log(response.data);
           configApi.post('series/'+response.data+'/upload', formData, {headers: { 'content-type': 'multipart/form-data' }}).then(response2 => {
-            console.log(response)
           }).catch(error =>{
             console.log(error)
           })
