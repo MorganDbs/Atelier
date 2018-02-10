@@ -85,16 +85,16 @@ Ajoute des images dans une série à partir du JSON fourni
       {
         "img": "003.jpeg",
         "coords": {
-          "lat": "40.0",
-          "lng": "6.0"
+        "lat": "40.0",
+        "lng": "6.0"
         }
       },
       ...
       {
         "img": "003.jpeg",
         "coords": {
-          "lat": "40.0",
-          "lng": "6.0"
+        "lat": "40.0",
+        "lng": "6.0"
       }
    }
 }
