@@ -49,6 +49,7 @@ Enfin taper <code>\q</code> pour quitter le shell.
 - Modification du lien vers l'API JEE
 > Editer le fichier **config.js** qui se trouve dans le dossier **webAppPlayer/src/config**
 > Editer la variable **url** par votre url d'API
+> Créer une série dans l'application back-office
 [Docmentation application joueur](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppPlayer/README.md)
 
 > Configurer l'application back-office
