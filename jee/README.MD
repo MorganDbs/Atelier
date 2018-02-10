@@ -45,26 +45,25 @@ Crée une série à partir du JSON fourni
 		},
 		"pictures": [
 			{
-				"img": "001.png",
-				"coords": {
-					"lat": "48.44444444444444444444",
-					"lng": "6.6"
+			"img": "001.png",
+			"coords": {
+				"lat": "48.44444444444444444444",
+				"lng": "6.6"
 				}
 			},
-			
 			{
-				"img": "002.png",
-				"coords": {
-					"lat": "48.8",
-					"lng": "6.6"
+			"img": "002.png",
+			"coords": {
+				"lat": "48.8",
+				"lng": "6.6"
 				}
 			},
 			...
 			{
-				"img": "010.png",
-				"coords": {
-					"lat": "48.8",
-					"lng": "6.6"
+			"img": "010.png",
+			"coords": {
+				"lat": "48.8",
+				"lng": "6.6"
 				}
 			}
 		]
