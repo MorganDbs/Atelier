@@ -19,6 +19,7 @@ import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import javax.persistence.Query;
 import javax.persistence.CacheStoreMode;
+import javax.persistence.TypedQuery;
 import org.lpro.entity.Game;
 
 /**
@@ -41,10 +42,9 @@ public class SerieManager {
     
     public Serie findById(String id){
         return this.em.find(Serie.class, id);
-    }
+    }  
     
     public Serie saveNewSeries(Serie s, Set<Picture> p){
-        s.setId(UUID.randomUUID().toString());
         s.setPicture(p);
         return this.em.merge(s);
     }

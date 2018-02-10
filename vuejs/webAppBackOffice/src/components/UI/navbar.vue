@@ -13,7 +13,7 @@
     </b-navbar-nav>
 
     <b-navbar-nav class="ml-auto d-inline-block">
-      <b-button variant="danger" @:click="signOut()">Se déconnecter</b-button>
+      <b-button variant="danger" @click="signout()">Se déconnecter</b-button>
     </b-navbar-nav>
 
   </b-collapse>
@@ -22,6 +22,8 @@
 
 <script>
 import router from '@/router'
+import { mapActions } from 'vuex'
+
   export default {
     data (){
       return {
@@ -29,10 +31,7 @@ import router from '@/router'
       }
     },
     methods: {
-      signOut(){
-        sessionStorage.clear()
-        router.push({name: 'home'})
-      },
+      ...mapActions('account', ['signout']),
       goToSeries() {
         router.push({name: 'series'})
       },

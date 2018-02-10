@@ -1,40 +1,32 @@
-
 import Vue from 'vue'
-import router from '../router'
-import confApi from '../configApi'
+import api from '@/configApi'
+import ls from '@/plugins/ls'
+import store from '@/store'
 
-const MyPlugin = {
+export default {
+    install: (Vue, options = {}) => {
+        // Add a request interceptor
+        api.interceptors.request.use( function (config) {
+            if(ls.get('token')){
+                if(!config.params){
+                    config.params = {}
+                }
+                config.params.token = ls.get('token')
+            }
+            return config
+        }, function (error) {
+            return Promise.reject(error)
+        })
 
-  install(Vue, options) {
-    // Add a request interceptor
-    confApi.interceptors.request.use( (config) => {
-      // Do something before request is sent
-      if(sessionStorage.getItem('isConnected') == 'Connect'){
-        if(!config.params){
-          config.params = {}
-        }
-        config.params.token = sessionStorage.getItem('token')
-      }
-      return config;
-    }, function (error) {
-      // Do something with request error
-      return Promise.reject(error);
-    });
-
-    // Add a response interceptor
-    confApi.interceptors.response.use((response) =>{
-      // Do something with response data
-      return response;
-    }, function (error) {
-      // Do something with response error
-      // if(error.response.status === 400){
-      //   alert("Mauvais Login ou Mot de passe");
-      // }
-      return Promise.reject(error);
-    });
-
-  }
+        // Add a response interceptor
+        api.interceptors.response.use(function (response) {
+            return response;
+        }, function (error) {
+            if(error.response && error.response.status == 401){
+                store.dispatch('account/signout', ! error.response.data.error.indexOf("wrong token"))
+                options.router.push({name: 'signin'})
+            }
+            return Promise.reject(error)
+        })
+    }
 }
-
-export default MyPlugin;
-
