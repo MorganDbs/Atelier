@@ -44,7 +44,7 @@ Puis, exécuter la commande suivante :
 
 Enfin taper <code>\q</code> pour quitter le shell de Postgres.
 
-:warning: Il n'y a aucun compte et série créé dans l'api, pour tester l'application vous devrez vous isncrire et créer votre série.
+:warning: Il n'y a aucun compte et série créé dans l'api, pour tester l'application vous devrez vous inscrire et créer votre série.
 
 ## Configurations
 > Configurer l'application joueur
