@@ -14,7 +14,7 @@
 - docker, docker-compose
 
 ## Installation - Linux, Mac
-Aller dans le dossier installation_linux, puis exécuter les commandes suivantes :
+Se rendre dans le dossier installation_linux, puis exécuter les commandes suivantes :
 
 - installer l'api java
 <pre>./installApi.sh</pre>
@@ -30,6 +30,19 @@ Aller dans le dossier installation_linux, puis exécuter les commandes suivantes
 
 - démarrer la partie player
 <pre>./startPlayer.sh</pre>
+
+## Insertion de données dans l'api java
+Pour faire fonctionner l'api il vous faudra des données dans la base de données PostgreSql.
+Pour cela, se rendre dans le dossier installation_linux, puis exécuter la commande suivante :
+
+<pre>./insertData.sh</pre>
+
+Celle-ci va demander un mot de passe pour se connecter à la base de données, entrer <code>td1-docker</code>.
+Puis, exécuter la commande suivante dans le shell de PostgreSql :
+
+<pre>\i docker-entrypoint-initdb.d/data.sql</pre>
+
+Enfin taper <code>\q</code> pour quitter le shell.
 
 ## Configurations
 > Configurer l'application joueur
