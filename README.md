@@ -32,17 +32,17 @@ Se rendre dans le dossier installation_linux, puis exécuter les commandes suiva
 <pre>./startPlayer.sh</pre>
 
 ## Insertion de données dans l'api java
-Pour faire fonctionner l'api il vous faudra des données dans la base Postgres.
+Pour faire fonctionner l'api il vous faudra des données dans la base de données PostgreSql.
 Pour cela, se rendre dans le dossier installation_linux, puis exécuter la commande suivante :
 
 <pre>./insertData.sh</pre>
 
-Celle-ci va demander un mot de passe pour se connecter à la base, entrer <code>td1-docker</code>.
-Puis, exécuter la commande suivante :
+Celle-ci va demander un mot de passe pour se connecter à la base de données, entrer <code>td1-docker</code>.
+Puis, exécuter la commande suivante dans le shell de PostgreSql :
 
 <pre>\i docker-entrypoint-initdb.d/data.sql</pre>
 
-Enfin taper <code>\q</code> pour quitter le shell de Postgres.
+Enfin taper <code>\q</code> pour quitter le shell.
 
 ## Configurations
 > Configurer l'application joueur
@@ -56,3 +56,10 @@ Enfin taper <code>\q</code> pour quitter le shell de Postgres.
 > Editer le fichier **index.js** qui se trouve dans le dossier **webAppBackOffice/src/configApi**
 > Editer la variable **baseURL** par votre url d'API
 [Docmentation application back-office](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppBackOffice/README.md)
+
+
+[Documentation de l'API](https://github.com/Manghao/Atelier/blob/master/jee/README.md)
+
+## Trello
+[Tableau de bord avec les stories identifiées](https://trello.com/b/2ABgzx0w)
+
