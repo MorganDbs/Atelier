@@ -44,19 +44,21 @@ Puis, exécuter la commande suivante dans le shell de PostgreSql :
 
 Enfin taper <code>\q</code> pour quitter le shell.
 
+:warning: Il n'y a aucun compte et série créé dans l'api, pour tester l'application vous devrez vous isncrire et créer votre série.
+
 ## Configurations
 > Configurer l'application joueur
 - Modification du lien vers l'API JEE
 > Editer le fichier **config.js** qui se trouve dans le dossier **webAppPlayer/src/config**
 > Editer la variable **url** par votre url d'API
 > Créer une série dans l'application back-office
-[Docmentation application joueur](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppPlayer/README.md)
+[Documentation application joueur](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppPlayer/README.md)
 
 > Configurer l'application back-office
 - Modification du lien vers l'API JEE
 > Editer le fichier **index.js** qui se trouve dans le dossier **webAppBackOffice/src/configApi**
 > Editer la variable **baseURL** par votre url d'API
-[Docmentation application back-office](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppBackOffice/README.md)
+[Documentation application back-office](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppBackOffice/README.md)
 
 
 [Documentation de l'API](https://github.com/Manghao/Atelier/blob/master/jee/README.md)
