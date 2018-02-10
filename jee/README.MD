@@ -37,8 +37,8 @@ Crée une série à partir du JSON fourni
 {
 	"serie": {
 		"name": "th",
-        "description": "Un quizz sur la ville de Nancy",
-        "city": "th",
+        	"description": "Un quizz sur la ville de Nancy",
+        	"city": "th",
 		"coords": {
 			"lat": "48.8",
 			"lng": "6.6"
