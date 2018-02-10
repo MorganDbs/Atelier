@@ -20,7 +20,7 @@
 
                   <v-marker v-for="picturers in currentSerie.pictures" :lat-lng="picturers.coords" :icon="markerIcon" visible v-on:l-add="togglePopup">
                     <v-popup :height="40" class="text-center">
-                      <img class="imageUpload" :src="test+currentSerie.id+test2+picturers.picture" />
+                      <img class="imageUpload" :src="picturers.picture" />
                     </v-popup>
                   </v-marker>
 		              <v-marker :v-if="markersToUpload" :icon="markerIcon" v-for="item,k in markersToUpload" :key="k" v-on:l-add="togglePopup" :lat-lng="item.coords">
@@ -80,8 +80,6 @@
     },
     data (){
       return {
-        test: 'http://localhost:8080/geoquizz/api/series/',
-        test2: '/pictures/',
         markerIcon:markerIcon,
         markersToUpload:[],
         marker:{

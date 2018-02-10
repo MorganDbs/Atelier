@@ -36,7 +36,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import static org.glassfish.jersey.uri.UriComponent.Type.PATH;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.lpro.boundary.difficulty.DifficultyManager;
 import org.lpro.boundary.game.GameManager;
@@ -46,7 +45,6 @@ import org.lpro.entity.Game;
 import org.lpro.entity.Picture;
 import org.lpro.entity.Serie;
 import org.lpro.provider.Secured;
-import token.Token;
 
 
 @Stateless
@@ -74,10 +72,10 @@ public class SerieRessource {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 417, message = "Expectation Failed"),
             @ApiResponse(code = 500, message = "Internal server error")})
-    public Response getSeries() {
+    public Response getSeries(@Context UriInfo uriInfo) {
         List<Serie> s = this.sm.findAll();
         List<Difficulty> d = this.dm.findAll();
-        return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d)).build();
+        return Response.status(Response.Status.OK).entity(buildJsonSeries(s, d, uriInfo)).build();
     }
     
     @GET
@@ -98,7 +96,7 @@ public class SerieRessource {
             ).build();
         }
         
-        return Response.status(Response.Status.OK).entity(buildJsonOneSerie(s)).build();
+        return Response.status(Response.Status.OK).entity(buildJsonOneSerie(s, uriInfo)).build();
     }
     
     @GET
@@ -430,7 +428,7 @@ public class SerieRessource {
                 .build();
     }
     
-    private JsonObject buildJsonOneSerie(Serie serie){
+    private JsonObject buildJsonOneSerie(Serie serie, UriInfo uriInfo){
         JsonArrayBuilder picturesJA = Json.createArrayBuilder();
 
         serie.getPicture().forEach((picture ->{
@@ -440,7 +438,7 @@ public class SerieRessource {
                     .build();
 
             JsonObject pic = Json.createObjectBuilder()
-                    .add("picture", picture.getUrl())
+                    .add("picture", uriInfo.getAbsolutePathBuilder().path("/pictures/"+ picture.getUrl()).build().toString())
                     .add("coords", coords)
                     .build();
 
@@ -458,7 +456,7 @@ public class SerieRessource {
                     .build();
     }
     
-    private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
+    private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d, UriInfo uriInfo){
         JsonArrayBuilder series = Json.createArrayBuilder();
         
         s.forEach((serie)->{
@@ -470,19 +468,22 @@ public class SerieRessource {
                         .build();
 
                 JsonObject pic = Json.createObjectBuilder()
-                        .add("picture", picture.getUrl())
+                        .add("picture", uriInfo.getAbsolutePathBuilder().path("/"+serie.getId()+"/pictures/"+ picture.getUrl()).build().toString())
                         .add("coords", coords)
                         .build();
 
                 picturesJA.add(pic);
             }));
-        
+             
+            String img = (!serie.getPicture().isEmpty()) ? serie.getPicture().iterator().next().getUrl() : "";
+            URI uri = uriInfo.getAbsolutePathBuilder().path("/"+serie.getId()+"/pictures/"+ img).build();
+         
             JsonObject ser = Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
-                    .add("picture", (!serie.getPicture().isEmpty()) ? serie.getPicture().iterator().next().getUrl() : "")
+                    .add("picture", uri.toString())
                     .add("picturesTab", picturesJA)
                     .build();
 
