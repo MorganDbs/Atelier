@@ -186,7 +186,7 @@ Crée un compte pour un utilisateur à partir du JSON fourni
 
 # Body
 {
-  "fullname" : "John Doe",
+  	"fullname" : "John Doe",
 	"mail": "test@test.fr",
 	"password": "test"
 }
