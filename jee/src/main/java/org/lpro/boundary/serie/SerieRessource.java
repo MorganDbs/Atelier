@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.activation.MimetypesFileTypeMap;
 import javax.ejb.Stateless;
@@ -130,7 +131,7 @@ public class SerieRessource {
             @ApiResponse(code = 417, message = "Expectation Failed"),
             @ApiResponse(code = 500, message = "Internal server error")})
     public Response addSerie(JsonObject serieParam, @Context UriInfo uriInfo) throws java.text.ParseException {
-
+        String uuid = UUID.randomUUID().toString();
         JsonObjectBuilder errors = Json.createObjectBuilder();
         JsonObject jsonSerie = null;
         JsonObject serieCoord = null;
@@ -205,7 +206,7 @@ public class SerieRessource {
         }else{
             pictures = jsonSerie.getJsonArray("pictures");
             System.out.println("taille: " + pictures.size());
-            if(pictures.size() < 10){
+            if(pictures.size() < 3){
                 errorsList += "Il faut renseigner encore "+ (10-pictures.size())  +" images. ";
                 flag_errors_pictures = true;
             }else{
@@ -244,8 +245,8 @@ public class SerieRessource {
                             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
                         }else{
                             String ext = pictures.getJsonObject(i).getString("img").substring(pictures.getJsonObject(i).getString("img").lastIndexOf("."), pictures.getJsonObject(i).getString("img").length());
-                            String nom = new Token().generateRandomString() + ext;
-                            Picture pic = new Picture(nom, Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
+                            String nom = uuid+"_"+Integer.valueOf(i+1).toString() + ext;
+                            Picture pic = new Picture(uuid+"_"+pictures.getJsonObject(i).getString("img"), Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
                             pic = this.pm.save(pic);
                             hspictures.add(pic);
                         }
@@ -261,6 +262,7 @@ public class SerieRessource {
         }
 
         Serie serie = new Serie(jsonSerie.getString("name"), jsonSerie.getString("description"), jsonSerie.getString("city"), Double.parseDouble(serieCoord.getString("lat")), Double.parseDouble(serieCoord.getString("lng")));
+        serie.setId(uuid);
         Serie newSerie = this.sm.saveNewSeries(serie, hspictures);
         
 
@@ -337,8 +339,8 @@ public class SerieRessource {
                             return Response.status(Response.Status.EXPECTATION_FAILED).entity(json_errors_pictures).build();
                         }else{
                             String ext = pictures.getJsonObject(i).getString("img").substring(pictures.getJsonObject(i).getString("img").lastIndexOf("."), pictures.getJsonObject(i).getString("img").length());
-                            String nom = new Token().generateRandomString() + ext;
-                            Picture pic = new Picture(nom, Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
+                            String nom = id+"_"+Integer.valueOf(s.getPicture().size()+i+1).toString() + ext;
+                            Picture pic = new Picture(id+"_"+pictures.getJsonObject(i).getString("img"), Double.parseDouble(serieCoordPictures.getString("lat")), Double.parseDouble(serieCoordPictures.getString("lng")));
                             pic = this.pm.save(pic);
                             hspictures.add(pic);
                         }
@@ -429,6 +431,22 @@ public class SerieRessource {
     }
     
     private JsonObject buildJsonOneSerie(Serie serie){
+        JsonArrayBuilder picturesJA = Json.createArrayBuilder();
+
+        serie.getPicture().forEach((picture ->{
+            JsonObject coords = Json.createObjectBuilder()
+                    .add("lat", picture.getLat())
+                    .add("lng", picture.getLng())
+                    .build();
+
+            JsonObject pic = Json.createObjectBuilder()
+                    .add("picture", picture.getUrl())
+                    .add("coords", coords)
+                    .build();
+
+            picturesJA.add(pic);
+        }));
+        
         return Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
@@ -436,19 +454,36 @@ public class SerieRessource {
                     .add("description", serie.getDescription())
                     .add("lat", serie.getLat())
                     .add("lng", serie.getLng())
+                    .add("pictures", picturesJA)
                     .build();
     }
     
     private JsonObject buildJsonSeries(List<Serie> s, List<Difficulty> d){
         JsonArrayBuilder series = Json.createArrayBuilder();
-
+        
         s.forEach((serie)->{
+            JsonArrayBuilder picturesJA = Json.createArrayBuilder();
+            serie.getPicture().forEach((picture ->{
+                JsonObject coords = Json.createObjectBuilder()
+                        .add("lat", picture.getLat())
+                        .add("lng", picture.getLng())
+                        .build();
+
+                JsonObject pic = Json.createObjectBuilder()
+                        .add("picture", picture.getUrl())
+                        .add("coords", coords)
+                        .build();
+
+                picturesJA.add(pic);
+            }));
+        
             JsonObject ser = Json.createObjectBuilder()
                     .add("id", serie.getId())
                     .add("name", serie.getName())
                     .add("city", serie.getCity())
                     .add("description", serie.getDescription())
                     .add("picture", (!serie.getPicture().isEmpty()) ? serie.getPicture().iterator().next().getUrl() : "")
+                    .add("picturesTab", picturesJA)
                     .build();
 
             series.add(ser);

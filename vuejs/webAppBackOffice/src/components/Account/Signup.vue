@@ -19,20 +19,20 @@
               <input type="email" class="form-control" v-model="mail" id="email"  placeholder="Mail" required>
             </div>
             <div class="form-group">
-              <input type="password" class="form-control" v-model="password" id="password" placeholder="Mot de passes" required>
+              <input type="password" class="form-control" v-model="password" id="password" placeholder="Mot de passe" required>
             </div>
             <br>
-            <button type="submit" class="btn btn-block btn-primary">Sign up</button>
+            <button type="submit" class="btn btn-block btn-primary">S'inscrire</button>
           </form>
 
           <div>
-            Déjà un compte compte?
+            Déjà un compte?
             <router-link :to="{ name: 'signin'}" class="btn btn-link" replace>Se connecter</router-link>
           </div>
         </div>
         <div class="col-md-6 offset-3">
           <br>
-          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">Le seul jeu qui vous fera passer, de bons moments. Enfin, un moyen de mélanger deux de vos passions, la géographie et le jeu.</p>
         </div>
       </div>
     </div>

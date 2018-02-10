@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-6 offset-3">
           <br>
-          <p class="lead">Le seul jeu qui te feras passer de bon moment. Enfin, un moyen de mélanger deux de tes passions, la geographie et le jeu.</p>
+          <p class="lead">Le seul jeu qui vous fera passer, de bons moments. Enfin, un moyen de mélanger deux de vos passions, la géographie et le jeu.</p>
         </div>
       </div>
     </div>

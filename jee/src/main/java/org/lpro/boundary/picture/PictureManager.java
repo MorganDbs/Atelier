@@ -67,7 +67,7 @@ public class PictureManager {
         
         for(int i= 0; i < inputParts.size(); i++){
             MultivaluedMap<String, String> headers = inputParts.get(i).getHeaders();
-            String filename = getFileName(headers, pics_name.get(i).replaceFirst("[.][^.]+$", ""));
+            String filename = getFileName(headers, serie_id);
             
             try {
                 InputStream is = inputParts.get(i).getBody(InputStream.class,null);
@@ -101,7 +101,7 @@ public class PictureManager {
         
         for(int i= 0; i < inputParts.size(); i++){
             MultivaluedMap<String, String> headers = inputParts.get(i).getHeaders();
-            String filename = getFileName(headers, pics_name.get(i).replaceFirst("[.][^.]+$", ""));
+            String filename = getFileName(headers, serie_id);
             
             try {
                 InputStream is = inputParts.get(i).getBody(InputStream.class,null);
@@ -150,7 +150,7 @@ public class PictureManager {
                 String[] name = filename.split("=");
                 String tmp = name[1].trim().replaceAll("\"", "");
                 String ext = tmp.substring(tmp.lastIndexOf("."), tmp.length());
-                String nom = s;
+                String nom = s+"_"+tmp.replaceFirst("[.][^.]+$", "");
 
                 return nom + ext;
             }

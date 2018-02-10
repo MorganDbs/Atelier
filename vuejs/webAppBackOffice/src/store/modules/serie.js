@@ -7,7 +7,8 @@ export default {
     state: {
         series: null,
         current_serie: null,
-        city_new_serie_coords: {lat: "48.692054", lng: "6.184417"}
+        city_new_serie_coords: {lat: "48.692054", lng: "6.184417"},
+        currentSeriePictures: []
     },
     mutations: {
         initiateSeries: (state, data) => {
@@ -15,6 +16,7 @@ export default {
         },
         currentSerie: (state, data) => {
             state.current_serie = data
+            state.currentSeriePictures = data.pictures
         },
         uploadSerie: (state) =>{
             router.push({
@@ -34,6 +36,9 @@ export default {
         },
         getGeolocInput: (state) =>{
             return state.city_new_serie_coords
+        },
+        getCurrentSeriePictures: (state) =>{
+            return state.currentSeriePictures
         }
     },
     actions: {
@@ -59,8 +64,6 @@ export default {
             })      
         },
         createSerie({ commit, state }, data) {
-            console.log(state.city_new_serie_coords.lat)
-            console.log("48.55")
             data.json.serie.coords.lat = state.city_new_serie_coords.lat.toString()
             data.json.serie.coords.lng = state.city_new_serie_coords.lng.toString()
             api.post('series/', data.json, {headers: { 'content-type': 'application/json' }}).then(response => {

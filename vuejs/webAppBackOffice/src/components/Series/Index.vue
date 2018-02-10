@@ -8,17 +8,17 @@
 		<b-row>
 			<b-card-group deck class="mt-4">
 				<b-col lg="4" v-for="serie in series" :key="serie.id" class="mb-5">
-				<b-card class="text-center">
-					<h3>
-				{{serie.name}} <small> ({{serie.city}})</small>
-				</h3>
-			    <p class="card-text">
-			      {{serie.description}}
-			    </p>
-			    <div slot="footer">
-	                <router-link :to="{ name: 'edit', params: { serie_id: serie.id }}"><b-button variant="info">Ajouter des images</b-button></router-link>
-	            </div>
-			  </b-card>
+					<b-card class="text-center" :img-src="test+serie.id+test2+serie.picture" >
+						<h3>
+					{{serie.name}} <small> ({{serie.city}})</small>
+					</h3>
+				    <p class="card-text">
+				      {{serie.description}}
+				    </p>
+				    <div slot="footer">
+		                <router-link :to="{ name: 'edit', params: { serie_id: serie.id }}"><b-button variant="info">Ajouter des images</b-button></router-link>
+		            </div>
+				  </b-card>
 	            </b-col> 
 			</b-card-group>
 		</b-row>
@@ -37,7 +37,8 @@ export default{
         },
         data () {
             return {
-
+            	test: 'http://localhost:8080/geoquizz/api/series/',
+        		test2: '/pictures/',
             }
         },
         created(){

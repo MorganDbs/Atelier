@@ -37,19 +37,30 @@
                               placeholder="Entrer la ville">
                 </b-form-input>
               </b-form-group>
-              <b-button type="submit" variant="primary" :disabled="this.nbrPhoto < 10" class="btn-block mt-2">Ajouter</b-button>
+              <b-button type="submit" variant="primary" :disabled="this.nbrPhoto < 3 || d" class="btn-block mt-2">Ajouter</b-button>
               <br>
               <div v-if="this.nbrPhoto < 10">
                 Vous devez encore ajouter {{10-this.nbrPhoto}} photos au minimum.
               </div>
               <div v-else>
-                Nombre minimum de photos requises ateints.
+                Nombre minimum de photos requises atteint.
+              </div>
+              <br>
+              <div v-if="d">
+                Vous avez ajouter deux images identiques / du meme nom.
               </div>
             </b-form>
         </b-col>
         <b-col lg="7" sm="7" md="7">
            <v-map ref="map" id="map" :zoom=13 :center="[geoloc.lat,geoloc.lng]" v-on:l-click="onMapClick">
             <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+            <v-marker :lat-lng="geoloc" :icon="markerIcon" :visible="marker.visible" v-on:l-add="togglePopup">
+              <v-popup :height="40" class="text-center">
+                 <p>Cliquez sur la carte pour choisir les diférents points de la série.</p>
+                <hr />
+                <p>Vous êtes ici !</p>
+              </v-popup>
+            </v-marker>
             <v-marker :v-if="markersToUpload" :icon="markerIcon" v-for="item,k in markersToUpload" :key="k" v-on:l-add="togglePopup" :lat-lng="item.coords">
 
               <v-popup >
@@ -102,7 +113,7 @@
         markerIcon2:marker,
         markersToUpload:[],
         marker:{
-          visible:false,
+          visible:true,
           coords: {
             lat: '',
             lng: ''
@@ -124,7 +135,8 @@
         image:[],
         file: [],
         name: [],
-        nbrPhoto: 0
+        nbrPhoto: 0,
+        d: false
       }
     },
     created: () =>{
@@ -142,21 +154,32 @@
         this.markersToUpload.push({coords: e.latlng})
       },
       addImage(fieldName, fileList,k,item){
-        this.imagePresent[k]=true;
         let input = {"fieldName": fieldName, "fileList": fileList}
-        this.name.push(fileList)
-        this.file.push(input);
-        this.createImage(input.fileList[0],k)
-        this.serie.serie.pictures.push(
-          {
-            "img":input.fileList[0].name,
-            "coords":
-              {
-                "lat":item.coords.lat.toString(),
-                "lng":item.coords.lng.toString()
-              }
+        let b = false
+        this.name.forEach(e =>{
+          if(fileList[0].name == e[0].name){
+            b = true
           }
-        )
+        })
+        if(b){
+          this.d = true
+        }else{
+          this.d = false       
+          this.imagePresent[k]=true;
+          this.name.push(fileList)
+          this.file.push(input);
+          this.createImage(input.fileList[0],k)
+          this.serie.serie.pictures.push(
+            {
+              "img":input.fileList[0].name,
+              "coords":
+                {
+                  "lat":item.coords.lat.toString(),
+                  "lng":item.coords.lng.toString()
+                }
+            }
+          )
+        }
       },
       createSerie(){
         const formData = new FormData();
@@ -199,5 +222,10 @@
   #map{
     width: 100%;
     height: 65vh;
+  }
+
+  .imageUpload{
+    width: 100%!important;
+    height: auto;
   }
 </style>
