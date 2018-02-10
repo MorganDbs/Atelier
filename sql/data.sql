@@ -1,5 +1,3 @@
-INSERT INTO account (id, fullname, mail, password) VALUES ('34212039-c1a5-4c03-a2a8-f8b541d3396d', 'Test Test', 'test.test@test.fr', '$2a$10$Rilms.2AHZXZ0CO2RW9hxuHy9Yl4eksJiz7fjUAIavvsJ3u5PPU2K');
-
 INSERT INTO difficulty (id, level, zoom) VALUES ('1', 'Facile', 18);
 INSERT INTO difficulty (id, level, zoom) VALUES ('2', 'Moyen', 15);
 INSERT INTO difficulty (id, level, zoom) VALUES ('3', 'Expert', 13);
