@@ -32,17 +32,17 @@ Se rendre dans le dossier installation_linux, puis exécuter les commandes suiva
 <pre>./startPlayer.sh</pre>
 
 ## Insertion de données dans l'api java
-Pour faire fonctionner l'api il vous faudra des données dans la base de données PostgreSql.
+Pour faire fonctionner l'api il vous faudra des données dans la base Postgres.
 Pour cela, se rendre dans le dossier installation_linux, puis exécuter la commande suivante :
 
 <pre>./insertData.sh</pre>
 
-Celle-ci va demander un mot de passe pour se connecter à la base de données, entrer <code>td1-docker</code>.
-Puis, exécuter la commande suivante dans le shell de PostgreSql :
+Celle-ci va demander un mot de passe pour se connecter à la base, entrer <code>td1-docker</code>.
+Puis, exécuter la commande suivante :
 
 <pre>\i docker-entrypoint-initdb.d/data.sql</pre>
 
-Enfin taper <code>\q</code> pour quitter le shell.
+Enfin taper <code>\q</code> pour quitter le shell de Postgres.
 
 ## Configurations
 > Configurer l'application joueur
