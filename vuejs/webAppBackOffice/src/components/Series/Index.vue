@@ -8,7 +8,7 @@
 		<b-row>
 			<b-card-group deck class="mt-4">
 				<b-col lg="4" v-for="serie in series" :key="serie.id" class="mb-5">
-					<b-card class="text-center" :img-src="test+serie.id+test2+serie.picture" >
+					<b-card class="text-center" :img-src="serie.picture" >
 						<h3>
 					{{serie.name}} <small> ({{serie.city}})</small>
 					</h3>
@@ -34,12 +34,6 @@ import navbar from '@/components/UI/navbar'
 export default{
 		components: {
             navbar: navbar
-        },
-        data () {
-            return {
-            	test: 'http://localhost:8080/geoquizz/api/series/',
-        		test2: '/pictures/',
-            }
         },
         created(){
             this.$store.dispatch('serie/initiateSeries')
