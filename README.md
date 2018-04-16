@@ -52,17 +52,14 @@ Enfin taper <code>\q</code> pour quitter le shell de Postgres.
 > Editer le fichier **config.js** qui se trouve dans le dossier **webAppPlayer/src/config**
 > Editer la variable **url** par votre url d'API
 > Créer une série dans l'application back-office
-[Documentation application joueur](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppPlayer/README.md)
+[Documentation application joueur](https://github.com/MorganDbs/Atelier/blob/master/vuejs/webAppPlayer/README.md)
 
 > Configurer l'application back-office
 - Modification du lien vers l'API JEE
 > Editer le fichier **index.js** qui se trouve dans le dossier **webAppBackOffice/src/configApi**
 > Editer la variable **baseURL** par votre url d'API
-[Documentation application back-office](https://github.com/Manghao/Atelier/blob/master/vuejs/webAppBackOffice/README.md)
+[Documentation application back-office](https://github.com/MorganDbs/Atelier/blob/master/vuejs/webAppBackOffice/README.md)
 
 
-[Documentation de l'API](https://github.com/Manghao/Atelier/blob/master/jee/README.md)
-
-## Trello
-[Tableau de bord avec les stories identifiées](https://trello.com/b/2ABgzx0w)
+[Documentation de l'API](https://github.com/MorganDbs/Atelier/blob/master/jee/README.md)
 
